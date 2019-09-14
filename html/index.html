@@ -4,7 +4,12 @@
 		<script>
 			function refreshImage(){
 				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
-				setTimeout('refreshImage()',255);
+				cam.onLoad = function(){
+					setTimeout('refreshImage()',255);
+				};
+				
+			}
+			function refreshStats(){
 				sendCommand("s");
 			}
 			function sendCommand(cmd){
@@ -16,7 +21,11 @@
 							return acc+=`<br/>${elem}`;
 						},"");
 					}
-					if(cmd!=="s"){statusdiv.innerHTML="Done";}
+					if(cmd!=="s"){
+						statusdiv.innerHTML="Done";
+					}else{
+						setTimeout('refreshStats()',5000);
+					}
 				});
 			}
 		</script>
