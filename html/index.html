@@ -4,10 +4,6 @@
 		<script>
 			function refreshImage(){
 				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
-				cam.onLoad = function(){
-					setTimeout('refreshImage()',255);
-				};
-				
 			}
 			function refreshStats(){
 				sendCommand("s");
@@ -52,6 +48,10 @@
 		</center>
 	</body>
 	<script>
+		cam.onload = function(){
+			setTimeout('refreshImage()',255);
+		};
+		refreshStats();
 		refreshImage();
 	</script>
 </html>
