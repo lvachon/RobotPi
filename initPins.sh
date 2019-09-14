@@ -25,14 +25,14 @@ echo "0" > /sys/class/gpio/gpio13/value
 echo "Making links..."
 rm -f /home/pi/left_*
 rm -f /home/pi/right_*
-ln -s /sys/class/gpio/gpio4/value /var/www/html/left_fwd
-ln -s /sys/class/gpio/gpio17/value /var/www/html/left_bwd
-ln -s /sys/class/gpio/gpio27/value /var/www/html/right_bwd
-ln -s /sys/class/gpio/gpio22/value /var/www/html/right_fwd
-ln -s /sys/class/gpio/gpio6/value /var/www/html/left_enable
-ln -s /sys/class/gpio/gpio13/value /var/www/html/right_enable
-chmod a+rwx /var/www/html/*_*
-chown www-data:www-data /var/www/html/*_*
+ln -s /sys/class/gpio/gpio4/value /home/pi/RobotPi/html/right_fwd
+ln -s /sys/class/gpio/gpio17/value /home/pi/RobotPi/html/right_bwd
+ln -s /sys/class/gpio/gpio27/value /home/pi/RobotPi/html/left_bwd
+ln -s /sys/class/gpio/gpio22/value /home/pi/RobotPi/html/left_fwd
+ln -s /sys/class/gpio/gpio6/value /home/pi/RobotPi/html/right_enable
+ln -s /sys/class/gpio/gpio13/value /home/pi/RobotPi/html/left_enable
+chmod a+rwx /home/pi/RobotPi/html/*_*
+chown www-data:www-data /home/pi/RobotPi/html/*_*
 echo "Done"
 
 

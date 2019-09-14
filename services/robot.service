@@ -4,7 +4,7 @@ After=remote-fs.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /home/pi/initPins.sh
+ExecStart=/bin/bash /home/pi/RobotPi/initPins.sh
 
 [Install]
 WantedBy=remote-fs.target

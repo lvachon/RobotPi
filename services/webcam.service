@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/bin/bash /home/pi/initWebcam.sh
+ExecStart=/bin/bash /home/pi/RobotPi/initWebcam.sh
 
 [Install]
 WantedBy=multi-user.target
