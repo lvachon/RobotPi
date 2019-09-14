@@ -4,7 +4,7 @@
 		<script>
 			function refreshImage(){
 				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
-				setTimeout('refreshImage()',2100);
+				setTimeout('refreshImage()',255);
 				sendCommand("s");
 			}
 			function sendCommand(cmd){
