@@ -1,4 +1,4 @@
-<?php
+<?php error_reporting(0);
 $cmd = strtolower($_POST['cmd']);
 $ou=array();
 if($cmd=="f"){
@@ -40,8 +40,8 @@ if($cmd=="s"){
 	$response[]=$ou[1];
 	$response[]=$ou[2];
 	$response[]=$ou[3];
-	$response[]="Disk usage: ".explode("\t",$ou[5])[4];
-	$response[]="Memory free: ".explode("\t",$ou[7])[2]."/".explode("\t",$ou[7])[0];
+	$response[]="Disk usage: ".explode(" ",$ou[5])[4];
+	$response[]="Memory free: ".explode(" ",$ou[7])[2]."/".explode("\t",$ou[7])[0];
 	echo json_encode($response);
 	die();
 }
