@@ -8,7 +8,7 @@
 				sendCommand("s");
 			}
 			function sendCommand(cmd){
-				statusdiv.innerHTML="Executing...";
+				if(cmd!=="s"){statusdiv.innerHTML="Executing...";}
 				$.post("command.php",{cmd:cmd},function(data){
 					data = JSON.parse(data);
 					if(data.length){
@@ -16,7 +16,7 @@
 							return acc+=`<br/>${elem}`;
 						},"");
 					}
-					statusdiv.innerHTML="Done";
+					if(cmd!=="s"){statusdiv.innerHTML="Done";}
 				});
 			}
 		</script>
