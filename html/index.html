@@ -3,7 +3,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script>
 			function refreshImage(){
-				cam.src = "frame.jpg?rnd="+Math.random();
+				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
 				setTimeout('refreshImage()',2100);
 				sendCommand("s");
 			}
@@ -24,7 +24,7 @@
 	<body>
 		<center>
 			<div>
-				<img id='cam' src='frame.jpg'/>
+				<img id='cam' src='ramdisk/frame.jpg'/>
 			</div>
 			<div>
 				<div id='statusdiv'>Ready</div>
