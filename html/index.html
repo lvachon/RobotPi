@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script>
+			function refreshImage(){
+				cam.src = "frame.jpg?rnd="+Math.random();
+				setTimeout('refreshImage()',2100);
+			}
+			function sendCommand(cmd){
+				statusdiv.innerHTML="Executing...";
+				$.post("command.php",{cmd:cmd},function(data){
+					statusdiv.innerHTML="Done";
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<center>
+			<div>
+				<img id='cam' src='frame.jpg'/>
+			</div>
+			<div>
+				<div id='statusdiv'>Ready</div>
+				<div><input type='button' value='FWD' onclick='sendCommand("f");'/></div>
+				<div>
+					<input type='button' value='LEFT' onclick='sendCommand("l");'/>
+					<input type='button' value='BWD' onclick='sendCommand("b");'/>
+					<input type='button' value='RIGHT' onclick='sendCommand("r");'/>
+				</div>
+				<div>
+					<input type='button' value='Enable' onclick='sendCommand("e");'/>
+					<input type='button' value='Disable' onclick='sendCommand("d");'/>
+				</div>
+			</div>
+		</center>
+	</body>
+	<script>
+		refreshImage();
+	</script>
+</html>
+
+

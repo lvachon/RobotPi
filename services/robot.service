@@ -1,0 +1,10 @@
+[Unit]
+Description=Robot
+After=remote-fs.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/pi/initPins.sh
+
+[Install]
+WantedBy=remote-fs.target
