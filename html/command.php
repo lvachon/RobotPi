@@ -24,8 +24,6 @@ if($cmd=="s"){
 	exec("vcgencmd measure_temp",$ou);
 	exec("vcgencmd measure_clock arm",$ou);
 	exec("vcgencmd measure_volts core",$ou);
-	exec("df -h /", $ou);
-	exec("free -h", $ou);
 	$response = array();
 	$parts = explode("=",$ou[0]);
 	$cpu_status = hexdec($parts[1]);
@@ -43,8 +41,6 @@ if($cmd=="s"){
 	$response[]=$ou[1];
 	$response[]=$ou[2];
 	$response[]=$ou[3];
-	$response[]="Disk usage: ".explode(" ",$ou[5])[4];
-	$response[]="Memory free: ".explode(" ",$ou[7])[2]."/".explode("\t",$ou[7])[0];
 	echo json_encode($response);
 	die();
 }
