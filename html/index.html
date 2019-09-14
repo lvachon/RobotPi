@@ -5,10 +5,16 @@
 			function refreshImage(){
 				cam.src = "frame.jpg?rnd="+Math.random();
 				setTimeout('refreshImage()',2100);
+				sendCommand("s");
 			}
 			function sendCommand(cmd){
 				statusdiv.innerHTML="Executing...";
 				$.post("command.php",{cmd:cmd},function(data){
+					if(data.length){
+						statsdiv.innerHTML = data.reduce((acc,elem)=>{
+							return acc+=`<br/>${elem}`;
+						},"");
+					}
 					statusdiv.innerHTML="Done";
 				});
 			}
@@ -31,6 +37,7 @@
 					<input type='button' value='Enable' onclick='sendCommand("e");'/>
 					<input type='button' value='Disable' onclick='sendCommand("d");'/>
 				</div>
+				<div id='statsdiv'>Stats...</div>
 			</div>
 		</center>
 	</body>

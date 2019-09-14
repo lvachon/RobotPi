@@ -19,5 +19,13 @@ if($cmd=="e"){
 if($cmd=="d"){
 	exec("./disable.sh 2>&1",$ou);
 }
+if($cmd=="s"){
+	exec("vcgencmd get_throttled",$ou);
+	exec("vcgencmd measure_temp",$ou);
+	exec("vcgencmd measure_clock arm",$ou);
+	exec("vcgencmd measure_volts core",$ou);
+	exec("df -h /", $ou);
+	exec("free -h", $ou);
+}
 
-var_dump($ou);
+echo json_encode($ou);
