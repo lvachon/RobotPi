@@ -26,6 +26,24 @@ if($cmd=="s"){
 	exec("vcgencmd measure_volts core",$ou);
 	exec("df -h /", $ou);
 	exec("free -h", $ou);
+	$response = array();
+	$parts = explode("=",$ou[0]);
+	$cpu_status = hexdec($parts[1]);
+	if($cpu_status && 1){$response[] = "Under-voltage detected";}
+	if($cpu_status && 2){$response[] = "Arm Freq-Cap";}
+	if($cpu_status && 4){$response[] = "Throttled";}
+	if($cpu_status && 8){$response[] = "Soft Temp Limit";}
+	if($cpu_status && (1<<16)){$response[] = "Under-voltage occured";}
+	if($cpu_status && (1<<17)){$response[] = "Freq-cap occured";}
+	if($cpu_status && (1<<18)){$response[] = "Throttling occured";}
+	if($cpu_status && (1<<19)){$response[] = "Soft Temp Limit occured";}
+	$response[]=$ou[1];
+	$response[]=$ou[2];
+	$response[]=$ou[3];
+	$response[]="Disk usage: ".explode("\t",$ou[5])[4];
+	$response[]="Memory free: ".explode("\t",$ou[7])[2]."/".explode("\t",$ou[7])[0];
+	echo json_encode($response);
+	die();
 }
 
 echo json_encode($ou);

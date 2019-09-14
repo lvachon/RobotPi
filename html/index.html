@@ -10,6 +10,7 @@
 			function sendCommand(cmd){
 				statusdiv.innerHTML="Executing...";
 				$.post("command.php",{cmd:cmd},function(data){
+					data = JSON.parse(data);
 					if(data.length){
 						statsdiv.innerHTML = data.reduce((acc,elem)=>{
 							return acc+=`<br/>${elem}`;
