@@ -2,6 +2,7 @@
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script>
+			keyStates = {};
 			function refreshImage(){
 				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
 			}
@@ -9,6 +10,7 @@
 				sendCommand("s");
 			}
 			function sendCommand(cmd){
+				Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
 				if(cmd!=="s"){statusdiv.innerHTML="Executing...";}
 				$.post("command.php",{cmd:cmd},function(data){
 					data = JSON.parse(data);
@@ -22,26 +24,49 @@
 					}else{
 						setTimeout('refreshStats()',5000);
 					}
+					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
+					Object.keys(keyStates).some(key=>{
+						if(keyStates[key].state){
+							keyStates[key].elem.onclick();
+							return true;
+						}
+						return false;
+					});
 				});
+			}
+			function keyDown(e){
+				if(keyStates[e.key]){
+					if(!keyStates[e.key].state){
+						keyStates[e.key].elem.onclick();
+					}
+					keyStates[e.key].state=true;
+				}
+			}
+			function keyUp(e){
+				if(keyStates[e.key]){
+					keyStates[e.key].state=false;
+				}
 			}
 		</script>
 	</head>
-	<body>
+	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
 		<center>
 			<div>
 				<img id='cam' src='ramdisk/frame.jpg'/>
 			</div>
 			<div>
 				<div id='statusdiv'>Ready</div>
-				<div><input type='button' value='FWD' onclick='sendCommand("f");'/></div>
+				<div><input type='button' value='FWD' onclick='sendCommand("f");' class='cmdbtn' key='w'/></div>
 				<div>
-					<input type='button' value='LEFT' onclick='sendCommand("l");'/>
-					<input type='button' value='BWD' onclick='sendCommand("b");'/>
-					<input type='button' value='RIGHT' onclick='sendCommand("r");'/>
+					<input type='button' value='LEFT' onclick='sendCommand("l");' class='cmdbtn' key='a'/>
+					<input type='button' value='BWD' onclick='sendCommand("b");' class='cmdbtn' key='s'/>
+					<input type='button' value='RIGHT' onclick='sendCommand("r");' class='cmdbtn' key='d'/>
 				</div>
 				<div>
-					<input type='button' value='Enable' onclick='sendCommand("e");'/>
-					<input type='button' value='Disable' onclick='sendCommand("d");'/>
+					<input type='button' value='Enable motors' onclick='sendCommand("e");' class='cmdbtn'/>
+					<input type='button' value='Disable motors' onclick='sendCommand("d");' class='cmdbtn'/>
+					<input type='button' value='Light on' onclick='sendCommand("l1");' class='cmdbtn'/>
+					<input type='button' value='Light off' onclick='sendCommand("l0");' class='cmdbtn'/>
 				</div>
 				<div id='statsdiv'>Stats...</div>
 			</div>
@@ -51,6 +76,11 @@
 		cam.onload = function(){
 			setTimeout('refreshImage()',255);
 		};
+		Array.from(document.getElementsByTagName("input")).forEach(elem=>{
+			if(elem.getAttribute("key")){
+				keyStates[elem.getAttribute("key")]={state:false, elem:elem};
+			}
+		})
 		refreshStats();
 		refreshImage();
 	</script>

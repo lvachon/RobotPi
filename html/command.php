@@ -44,5 +44,11 @@ if($cmd=="s"){
 	echo json_encode($response);
 	die();
 }
+if($cmd=="l1"){
+	exec("echo 1 > led");
+}
+if($cmd=="l0"){
+	exec("echo 0 > led");
+}
 
 echo json_encode($ou);
