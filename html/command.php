@@ -27,7 +27,7 @@ if($cmd=="s"){
 	$response = array();
 	$parts = explode("=",$ou[0]);
 	$cpu_status = hexdec($parts[1]);
-	$response[]=$cpu_status;
+	$response[]=$cpu_status.($parts[1]);
 	if($cpu_status & 1){$response[] = "Under-voltage detected";}
 	if($cpu_status & 2){$response[] = "Arm Freq-Cap";}
 	if($cpu_status & 4){$response[] = "Throttled";}
@@ -42,14 +42,16 @@ if($cmd=="s"){
 	$response[]=$ou[1];
 	$response[]=$ou[2];
 	$response[]=$ou[3];
+	$response[]="Battery: ".`python vbatt.py`."V";
 	echo json_encode($response);
 	die();
 }
 if($cmd=="l1"){
-	exec("echo 1 > led");
+	exec("echo 0 > led");
 }
 if($cmd=="l0"){
-	exec("echo 0 > led");
+	exec("echo 1 > led");
 }
 
 echo json_encode($ou);
+
