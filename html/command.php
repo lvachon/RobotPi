@@ -42,6 +42,7 @@ if($cmd=="s"){
 	$response[]=$ou[1];
 	$response[]=$ou[2];
 	$response[]=$ou[3];
+	$response[]="Battery: ".`python vbatt.py`."V";
 	echo json_encode($response);
 	die();
 }
