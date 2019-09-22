@@ -13,8 +13,11 @@
 				sendCommand("s");
 			}
 			function sendCommand(cmd){
-				Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
-				if(cmd!=="s"){statusdiv.innerHTML="Executing...";}
+				
+				if(cmd!=="s"){
+					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
+					statusdiv.innerHTML="Executing...";
+				}
 				$.post("command.php",{cmd:cmd},function(data){
 					data = JSON.parse(data);
 					if(data.length){
@@ -24,10 +27,11 @@
 					}
 					if(cmd!=="s"){
 						statusdiv.innerHTML="Done";
+						Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
 					}else{
 						setTimeout('refreshStats()',5000);
 					}
-					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
+					
 					Object.keys(keyStates).some(key=>{
 						if(keyStates[key].state){
 							keyStates[key].elem.onclick();
