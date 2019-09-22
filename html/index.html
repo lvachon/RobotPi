@@ -6,8 +6,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script>
 			keyStates = {};
-			function refreshImage(){
-				cam.src = "ramdisk/frame.jpg?rnd="+Math.random();
+			function refreshImage(url,elem){
+				elem.src = `${url}?rnd=${Math.random()}`;
 			}
 			function refreshStats(){
 				sendCommand("s");
@@ -55,7 +55,8 @@
 	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
 		<center>
 			<div>
-				<img id='cam' src='ramdisk/frame.jpg'/>
+				<img id='cam' src='ramdisk/frame.jpg' style='width:512px;height:384px;'/>
+				<img id='robot' src='ramdisk/robot.jpg' style='width:512px;height:384px;'/>
 			</div>
 			<div>
 				<div id='statusdiv'>Ready</div>
@@ -77,8 +78,13 @@
 	</body>
 	<script>
 		cam.onload = function(){
-			setTimeout('refreshImage()',255);
+			setTimeout('refreshImage(cam,"ramdisk/frame.jpg")',255);
 		};
+		cam.onerror = cam.onload;
+		robot.onload = function(){
+			setTimeout('refreshImage(robot,"ramdisk/robot.jpg")',1000);
+		};
+		robot.onerror = robot.onload;
 		Array.from(document.getElementsByTagName("input")).forEach(elem=>{
 			if(elem.getAttribute("key")){
 				keyStates[elem.getAttribute("key")]={state:false, elem:elem};

@@ -27,7 +27,7 @@ if($cmd=="s"){
 	$response = array();
 	$parts = explode("=",$ou[0]);
 	$cpu_status = hexdec($parts[1]);
-	$response[]=$cpu_status.($parts[1]);
+	$response[]=$parts[1];
 	if($cpu_status & 1){$response[] = "Under-voltage detected";}
 	if($cpu_status & 2){$response[] = "Arm Freq-Cap";}
 	if($cpu_status & 4){$response[] = "Throttled";}
