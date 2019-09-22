@@ -14,8 +14,10 @@ while(1):
     if frame.size>0:
         hsv =  cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 	hueFloor = hsv[int(3*height/4)][int(width/2)][0]
-        hueRange = 5.;
-        mask = cv2.inRange(hsv, np.array((hueFloor-hueRange, 32.,32.)), np.array((hueFloor+hueRange,255.,255.)))
+	satFloor = hsv[int(3*height/4)][int(width/2)][1]
+	satRange = 10.
+        hueRange = 10.
+        mask = cv2.inRange(hsv, np.array((hueFloor-hueRange, satFloor-satRange,32.)), np.array((hueFloor+hueRange,satFloor+satRange,255.)))
 
         cv2.imwrite('./html/ramdisk/robot.jpg',mask, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
     else:
