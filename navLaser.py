@@ -1,5 +1,5 @@
 #! /usr/bin/python
-
+import os
 import numpy as np
 import cv2
 
@@ -9,7 +9,7 @@ height = frame.size / frame[0].size
 #blurred = np.zeros((height,width,3), np.uint8)
 #satRange = 10.
 #hueRange = 15.
-maxY=550
+maxY=400
 while(1):
     frame = cv2.imread('./html/ramdisk/frame.jpg')
     if frame.size>0:
@@ -34,7 +34,17 @@ while(1):
 	cv2.line(frame,(width/3,cMaxY),(2*width/3,cMaxY),(0,0,255),8)
 	cv2.line(frame,(2*width/3,rMaxY),(width,rMaxY),(0,0,255),8)
 	if lMaxY<maxY and cMaxY<maxY and rMaxY<maxY:
-		system('echo 1 > ./html/fwd.sh')
+		os.system('cd html;./fwd.sh')
+	else:
+		if lMaxY<maxY and (rMaxY>maxY or cMaxY>maxY):
+			os.system('cd html;./left.sh')
+		else:
+			if rMaxY<maxY and (lMaxY>maxY or cMaxY>maxY):
+                		os.system('cd html;./right.sh')
+			else:
+				if cMaxY>maxY:
+					os.system('cd html;./bwd.sh')
+
 
 	#print(mask)
 	#mask = cv2.inRange(mask,0,255)
