@@ -1,7 +1,7 @@
 #!/bin/bash
 echo 1 > left_fwd
 echo 1 > right_fwd
-sleep 1
+sleep 0.5
 echo 0 > left_fwd
 echo 0 > right_fwd
 
