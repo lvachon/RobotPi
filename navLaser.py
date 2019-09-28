@@ -11,21 +11,26 @@ height = frame.size / frame[0].size
 #satRange = 10.
 #hueRange = 15.
 maxY=400
+contours = ()
 while(1):
     frame = cv2.imread('./html/ramdisk/frame.jpg')
     if frame.size>0:
 	#b,g,r = cv2.split(frame)
-	mask = cv2.subtract(frame[:,:,2],frame[:,:,1])
-	mask = cv2.subtract(mask,frame[:,:,0])
+	red = cv2.multiply(frame[:,:,2],1)
+	green = cv2.divide(frame[:,:,1],2.)
+	blue = cv2.divide(frame[:,:,0],2.)
+	mask = cv2.subtract(red,green+blue)
+	#mask = cv2.subtract(mask,cv2.divide(blue,2))
+	#mask = cv2.equalizeHist(mask)
 	blur = cv2.GaussianBlur(mask,(5,5),0)
-	ret,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+	ret,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY + +cv2.THRESH_OTSU)
 	contours,hierarchy = cv2.findContours(mask, 1, 2)
 	lMaxY=0
 	cMaxY=0
 	rMaxY=0
 	for cnt in contours:
 		x,y,w,h = cv2.boundingRect(cnt)
-		if w<4 or h<4:
+		if w<2 or h<2:
 			continue
 		if x<width/3 and y>lMaxY:
 			lMaxY=y
@@ -51,7 +56,7 @@ while(1):
 
 	#print(mask)
 	#mask = cv2.inRange(mask,0,255)
-	cv2.imwrite('./html/ramdisk/robot.jpg',mask, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
+	cv2.imwrite('./html/ramdisk/robot.jpg',frame, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
     else:
         break
 
