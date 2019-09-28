@@ -2,6 +2,7 @@
 import os
 import numpy as np
 import cv2
+import time
 
 frame = cv2.imread('./html/ramdisk/frame.jpg')
 width = frame[0].size/3
@@ -24,6 +25,8 @@ while(1):
 	rMaxY=0
 	for cnt in contours:
 		x,y,w,h = cv2.boundingRect(cnt)
+		if w<4 or h<4:
+			continue
 		if x<width/3 and y>lMaxY:
 			lMaxY=y
 		if x>width/3 and x<2*width/3 and y>cMaxY:
@@ -44,11 +47,11 @@ while(1):
 			else:
 				if cMaxY>maxY:
 					os.system('cd html;./bwd.sh')
-
+	time.sleep(.500)
 
 	#print(mask)
 	#mask = cv2.inRange(mask,0,255)
-	cv2.imwrite('./html/ramdisk/robot.jpg',frame, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
+	cv2.imwrite('./html/ramdisk/robot.jpg',mask, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
     else:
         break
 
