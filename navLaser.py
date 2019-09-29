@@ -1,29 +1,40 @@
 #! /usr/bin/python
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import os
 import numpy as np
 import cv2
 import time
 
-frame = cv2.imread('./html/ramdisk/frame.jpg')
-width = frame[0].size/3
-height = frame.size / frame[0].size
-#blurred = np.zeros((height,width,3), np.uint8)
-#satRange = 10.
-#hueRange = 15.
-maxY=400
+width=640
+height=480
+maxY=250
 contours = ()
-while(1):
-    frame = cv2.imread('./html/ramdisk/frame.jpg')
-    if frame.size>0:
-	#b,g,r = cv2.split(frame)
-	red = cv2.multiply(frame[:,:,2],1)
-	green = cv2.divide(frame[:,:,1],2.)
-	blue = cv2.divide(frame[:,:,0],2.)
-	mask = cv2.subtract(red,green+blue)
-	#mask = cv2.subtract(mask,cv2.divide(blue,2))
-	#mask = cv2.equalizeHist(mask)
+camera = PiCamera()
+camera.resolution = (640, 480)
+camera.framerate = 10
+rawCapture = PiRGBArray(camera, size=(640, 480))
+laserOn = 0
+time.sleep(0.1)
+laserImage = np.array(())
+darkImage = np.array(())
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    print(frame)
+    if laserOn>0:
+        os.system('echo 1 > ./html/led')
+        laserImage = frame.array
+    else:
+        os.system('echo 0> ./html/led')
+        darkImage = frame.array
+    laserOn = 1-laserOn
+    if laserImage.size>0 and darkImage.size>0:
+	#red = cv2.multiply(image[:,:,2],1)
+	#green = cv2.multiply(image[:,:,1],1)
+	#blue = cv2.multiply(image[:,:,0],1)
+	mask = cv2.subtract(laserImage,darkImage)
 	blur = cv2.GaussianBlur(mask,(5,5),0)
 	ret,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY + +cv2.THRESH_OTSU)
+	blobs = cv2.multiply(mask,1)
 	contours,hierarchy = cv2.findContours(mask, 1, 2)
 	lMaxY=0
 	cMaxY=0
@@ -38,9 +49,9 @@ while(1):
 			cMaxY=y
 		if x>2*width/3 and y>rMaxY:
 			rMaxY=y
-	cv2.line(frame,(0,lMaxY),(width/3,lMaxY),(0,0,255),8)
-	cv2.line(frame,(width/3,cMaxY),(2*width/3,cMaxY),(0,0,255),8)
-	cv2.line(frame,(2*width/3,rMaxY),(width,rMaxY),(0,0,255),8)
+	cv2.line(image,(0,lMaxY),(width/3,lMaxY),(0,0,255),8)
+	cv2.line(image,(width/3,cMaxY),(2*width/3,cMaxY),(0,0,255),8)
+	cv2.line(image,(2*width/3,rMaxY),(width,rMaxY),(0,0,255),8)
 	if lMaxY<maxY and cMaxY<maxY and rMaxY<maxY:
 		os.system('cd html;./fwd.sh')
 	else:
@@ -54,9 +65,8 @@ while(1):
 					os.system('cd html;./bwd.sh')
 	time.sleep(.500)
 
-	#print(mask)
-	#mask = cv2.inRange(mask,0,255)
-	cv2.imwrite('./html/ramdisk/robot.jpg',frame, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
+	cv2.imwrite('./html/ramdisk/robot.jpg',blobs, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
     else:
         break
+    rawCapture.truncate(0)
 
