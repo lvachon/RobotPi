@@ -19,15 +19,15 @@ time.sleep(0.1)
 laserImage = np.array(())
 darkImage = np.array(())
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-    print(frame)
-    if laserOn>0:
-        os.system('echo 1 > ./html/led')
-        laserImage = frame.array
-    else:
-        os.system('echo 0> ./html/led')
-        darkImage = frame.array
-    laserOn = 1-laserOn
-    if laserImage.size>0 and darkImage.size>0:
+	print(frame)
+	if laserOn>0:
+		os.system('echo 1 > ./html/led')
+		laserImage = frame.array
+	else:
+		os.system('echo 0> ./html/led')
+		darkImage = frame.array
+	laserOn = 1-laserOn
+	if laserImage.size>0 and darkImage.size>0:
 	#red = cv2.multiply(image[:,:,2],1)
 	#green = cv2.multiply(image[:,:,1],1)
 	#blue = cv2.multiply(image[:,:,0],1)
@@ -59,14 +59,14 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 			os.system('cd html;./left.sh')
 		else:
 			if rMaxY<maxY and (lMaxY>maxY or cMaxY>maxY):
-                		os.system('cd html;./right.sh')
+						os.system('cd html;./right.sh')
 			else:
 				if cMaxY>maxY:
 					os.system('cd html;./bwd.sh')
 	time.sleep(.500)
 
 	cv2.imwrite('./html/ramdisk/robot.jpg',blobs, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
-    else:
-        break
-    rawCapture.truncate(0)
+	else:
+		break
+	rawCapture.truncate(0)
 
