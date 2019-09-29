@@ -8,7 +8,7 @@ import time
 
 width=640
 height=480
-maxY=250
+maxY=225
 contours = ()
 camera = PiCamera()
 camera.resolution = (640, 480)
@@ -28,11 +28,10 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 		print("laseroff")
 		os.system('echo 0 > ./html/led')
 		darkImage = frame.array[:,:,2]
-	laserOn = 1-laserOn
 	if laserImage.size>0 and darkImage.size>0 and laserOn==0:
 		sub = cv2.subtract(laserImage,darkImage)
 		blur = cv2.GaussianBlur(sub,(5,5),0)
-                blobs = cv2.inRange(blur,20,255)
+		blobs = cv2.inRange(blur,20,255)
 		mask = cv2.multiply(blobs,1)
 		contours,hierarchy = cv2.findContours(blobs, 1, 2)
 		lMaxY=0
@@ -65,4 +64,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 		time.sleep(1)
 		cv2.imwrite('./html/ramdisk/robot.jpg',mask, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
 	rawCapture.truncate(0)
+	cv2.imwrite('./html/ramdisk/frame.jpg',cleanImage, [int(cv2.IMWRITE_JPEG_QUALITY), 25])
+	laserOn = 1-laserOn
 
