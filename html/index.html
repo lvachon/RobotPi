@@ -71,10 +71,9 @@
 					<input type='button' value='RIGHT' onclick='sendCommand("r");' class='cmdbtn' key='d'/>
 				</div>
 				<div>
-					<input type='button' value='Enable motors' onclick='sendCommand("e");' class='cmdbtn'/>
-					<input type='button' value='Disable motors' onclick='sendCommand("d");' class='cmdbtn'/>
-					<input type='button' value='Light on' onclick='sendCommand("l1");' class='cmdbtn'/>
-					<input type='button' value='Light off' onclick='sendCommand("l0");' class='cmdbtn'/>
+					<label><input type='checkbox' onchange='this.checked?sendCommand("e"):sendCommand("d");' class='cmdbtn'/>Motors</label>
+					<label><input type='checkbox' onchange='this.checked?sendCommand("l1"):sendCommand("l0");' class='cmdbtn'/>Laser</label>
+					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/>Automode</label>
 				</div>
 				<div id='statsdiv'>Stats...</div>
 			</div>

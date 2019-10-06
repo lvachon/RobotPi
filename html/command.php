@@ -48,11 +48,16 @@ if($cmd=="s"){
 	die();
 }
 if($cmd=="l1"){
-	exec("echo 0 > led");
-}
-if($cmd=="l0"){
 	exec("echo 1 > led");
 }
-
+if($cmd=="l0"){
+	exec("echo 0 > led");
+}
+if($cmd=="a1"){
+	file_put_contents("/home/pi/RobotPi/html/ramdisk/autocmd","GO");
+}
+if($cmd=="a0"){
+	file_put_contents("/home/pi/RobotPi/html/ramdisk/autocmd","STOP");
+}
 echo json_encode($ou);
 
