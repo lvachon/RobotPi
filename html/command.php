@@ -24,7 +24,7 @@ if($cmd=="s"){
 	exec("vcgencmd measure_temp",$ou);
 	exec("vcgencmd measure_clock arm",$ou);
 	exec("vcgencmd measure_volts core",$ou);
-	$response = array();
+	$response = array(time());
 	$parts = explode("=",$ou[0]);
 	$cpu_status = hexdec($parts[1]);
 	$response[]=$parts[1];
@@ -42,7 +42,7 @@ if($cmd=="s"){
 	$response[]=$ou[1];
 	$response[]=$ou[2];
 	$response[]=$ou[3];
-	$response[]="Battery: ".trim(`python vbatt.py`)."V";
+	$response[]="Battery: ".strval(`python vbatt.py`)."V";
 	echo json_encode($response);
 	file_put_contents("statlog",json_encode($response).",\n",FILE_APPEND);
 	die();
