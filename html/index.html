@@ -22,7 +22,7 @@
 					data = JSON.parse(data);
 					if(data.length){
 						statsdiv.innerHTML = data.reduce((acc,elem)=>{
-							return acc+=`<br/>${elem}`;
+							return acc+=`<div class='stat'>${elem}</div>`;
 						},"");
 					}
 					if(cmd!=="s"){
@@ -55,29 +55,91 @@
 				}
 			}
 		</script>
+		<style>
+			.container {
+                                display: flex;
+                                flex-direction:row;
+                                width: 100%;
+                        }
+			@media screen and (max-width: 1440px) {
+ 			   .container {
+			        flex-direction:column;
+			    }
+			}
+			.controls {
+				flex-grow: 1;
+				flex-shrink: 1;
+				display:flex;
+				align-items:center;
+				flex-direction:column;
+				min-width:520px;
+			}
+			.pics {
+				flex-grow: 3;
+				flex-shrink: 1;
+				flex-direction:column;
+			}
+			.stat {
+				border: solid 1px #BBBBBB;
+				background: #333333;
+				border-radius:4px;
+				margin:4px;
+				display:block;
+				float:left;
+				text-align:center;
+				padding:2px;
+				white-space:nowrap;
+
+			}
+			label{
+				display:flex;
+				align-items:center;
+				flex-direction:column;
+			}
+			.label{
+				display:flex;
+				flex-direction:column;
+			}
+			.stats {
+				margin:16px;
+				max-width:520px;
+			}
+			body{
+				background:#222222;
+				color:#AAAAAA;
+			}
+			input{
+				background:#444444;
+				color:#AAAAAA;
+			}
+		</style>
+
 	</head>
 	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
-		<center>
-			<div>
-				<img id='cam' src='ramdisk/frame.jpg' style='width:512px;height:384px;'/>
-				<img id='robot' src='ramdisk/robot.jpg' style='width:512px;height:384px;'/>
+		<div class='container'>
+			<div class='pics'>
+				<img id='cam' src='ramdisk/frame.jpg' style='width:100%;flex-grow:2;'/>
+				<img id='robot' src='ramdisk/robot.jpg' style='width:50%;flex-grow:1;'/>
 			</div>
-			<div>
-				<div id='statusdiv'>Ready</div>
+			<div class='controls'>
+				<div id='statusdiv' >Ready</div>
 				<div><input type='button' value='FWD' onclick='sendCommand("f");' class='cmdbtn' key='w'/></div>
 				<div>
 					<input type='button' value='LEFT' onclick='sendCommand("l");' class='cmdbtn' key='a'/>
 					<input type='button' value='BWD' onclick='sendCommand("b");' class='cmdbtn' key='s'/>
 					<input type='button' value='RIGHT' onclick='sendCommand("r");' class='cmdbtn' key='d'/>
 				</div>
-				<div>
-					<label><input type='checkbox' onchange='this.checked?sendCommand("e"):sendCommand("d");' class='cmdbtn'/>Motors</label>
-					<label><input type='checkbox' onchange='this.checked?sendCommand("l1"):sendCommand("l0");' class='cmdbtn'/>LED</label>
-					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/>Automode</label>
+				<div style='display:flex;flex-direction:row;'>
+					<label>
+						<input type='checkbox' onchange='this.checked?sendCommand("e"):sendCommand("d");' class='cmdbtn'/>
+						<span class='label'>Motors</span>
+					</label>
+					<label><input type='checkbox' onchange='this.checked?sendCommand("l1"):sendCommand("l0");' class='cmdbtn'/><span class='label'>LED</span></label>
+					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/><span class='label'>Automode</span></label>
 				</div>
-				<div id='statsdiv'>Stats...</div>
+				<div class='stats' id='statsdiv'>Stats...</div>
 			</div>
-		</center>
+		</div>
 	</body>
 	<script>
 		cam.onload = function(){
@@ -87,7 +149,7 @@
 		robot.onload = function(){
 			setTimeout('refreshImage(robot,"ramdisk/robot.jpg")',1000);
 		};
-		robot.onerror = robot.onload;
+		//robot.onerror = robot.onload;
 		Array.from(document.getElementsByTagName("input")).forEach(elem=>{
 			if(elem.getAttribute("key")){
 				keyStates[elem.getAttribute("key")]={state:false, elem:elem};
