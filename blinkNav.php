@@ -3,17 +3,22 @@ $frameFile = "./html/ramdisk/frame.jpg";
 $frameSleep = 300;
 $downsamplePower = 4;
 function ledOn(){
+	echo("LED ON\n");
 	exec("echo 1 > ./html/led");
 }
 function ledOff(){
+	echo("LED OFF\n");
 	exec("echo 0 > ./html/led");
 }
-function awaitFrame($lastTime=0,$timeout=20000){
+function awaitFrame($lastSize=0,$timeout=20000){
+	global $frameFile,$frameSleep;
 	$wait=false;
 	do{
 		if(!file_exists($frameFile)){$wait=true;}
 		else{
-			if(filemtime($frameFile)<=$lastTime){$wait=true;}
+			clearstatcache();
+			echo("FRAME EXISTS (cur=".strval(filemtime($frameFile))."old={$lastSize}\n");
+			if(filemtime($frameFile)==$lastSize){$wait=true;}
 			else{$wait=false;break;}
 		}
 		$timeout-=$frameSleep;
@@ -32,21 +37,24 @@ function lum($color){
 		$components["b"]*0.0722; 
 }
 function makeDepthMap(){
+	global $downsamplePower,$frameFile;
 	ledOff();
-	awaitFrame(time());
-	$darkFrame = imagecratefromjpeg($frameFile);
+	echo("GETTING DARK FRAME\n");
+	$darkSize = awaitFrame(time()/*filesize($frameFile)*/);
+	$darkFrame = imagecreatefromjpeg($frameFile);
 	ledOn();
-	awaitFrame(time());
+	echo("GETTING LIGHT FRAME\n");
+	awaitFrame($darkSize);
 	$lightFrame = imagecreatefromjpeg($frameFile);
-
+	echo("SCALING BY POWER $downsamplePower\n");
 	$darkFrame = imagescale($darkFrame,imagesx($darkFrame)>>$downsamplePower,imagesy($darkFrame)>>$downsamplePower);
 	$lightFrame = imagescale($lightFrame,imagesx($lightFrame)>>$downsamplePower,imagesy($lightFrame)>>$downsamplePower);
 
 	$width = imagesx($darkFrame);
 	$height = imagesy($darkFrame);
-
+	echo("FINAL IMAGE SIZE: $width x $height\n");
 	$depthMap = imagecreatetruecolor($width,$height);
-
+	echo("COMPUTING DEPTH MAP\n");
 	for($y=0;$y<$height;$y++){
 		for($x=0;$x<$width;$x++){
 			$darkPixel = imagecolorat($darkFrame,$x,$y);
@@ -65,7 +73,9 @@ while(true){
 	if(file_exists("./html/ramdisk/autocmd")){
 		if(file_get_contents("./html/ramdisk/autocmd")=="GO"){
 			//Motors off
+			echo("GO!  MAKING DEPTH MAP\n");
 			$depthMap = makeDepthMap();
+			echo("SAVING DEPTH MAP\n\n");
 			imagejpeg($depthMap,"./html/ramdisk/robot.jpg");
 			//Do stuff
 		}
