@@ -123,11 +123,45 @@
 			</div>
 			<div class='controls'>
 				<div id='statusdiv' >Ready</div>
-				<div><input type='button' value='FWD' onclick='sendCommand("f");' class='cmdbtn' key='w'/></div>
 				<div>
-					<input type='button' value='LEFT' onclick='sendCommand("l");' class='cmdbtn' key='a'/>
-					<input type='button' value='BWD' onclick='sendCommand("b");' class='cmdbtn' key='s'/>
-					<input type='button' value='RIGHT' onclick='sendCommand("r");' class='cmdbtn' key='d'/>
+					<input 
+						type='button' 
+						value='FWD' 
+						onclick='sendCommand("f");' 
+						ontouchstart='keyStates["w"].state=true;sendCommand("f");' 
+						ontouchend='keyStates["w"].state=false;' 
+						class='cmdbtn' 
+						key='w'
+					/>
+				</div>
+				<div>
+					 <input
+                                                type='button'
+                                                value='LEFT'
+                                                onclick='sendCommand("l");'
+                                                ontouchstart='keyStates["a"].state=true;sendCommand("l");'
+                                                ontouchend='keyStates["a"].state=false;'
+                                                class='cmdbtn'
+                                                key='a'
+                                        />
+					 <input
+                                                type='button'
+                                                value='BACK'
+                                                onclick='sendCommand("b");'
+                                                ontouchstart='keyStates["s"].state=true;sendCommand("b");'
+                                                ontouchend='keyStates["s"].state=false;'
+                                                class='cmdbtn'
+                                                key='s'
+                                        />
+					 <input
+                                                type='button'
+                                                value='RIGHT'
+                                                onclick='sendCommand("r");'
+                                                ontouchstart='keyStates["d"].state=true;sendCommand("r");'
+                                                ontouchend='keyStates["d"].state=false;'
+                                                class='cmdbtn'
+                                                key='d'
+                                        />
 				</div>
 				<div style='display:flex;flex-direction:row;'>
 					<label>
