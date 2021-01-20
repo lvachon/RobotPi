@@ -44,7 +44,7 @@ if($cmd=="s"){
 	$response[]=$ou[3];
 	$response[]="Battery: ".trim(`python vbatt.py`)."V";
 	echo json_encode($response);
-	file_put_contents("statlog",json_encode($response).",\n",FILE_APPEND);
+	file_put_contents("./ramdisk/statlog",json_encode($response).",\n",FILE_APPEND);
 	die();
 }
 if($cmd=="l1"){

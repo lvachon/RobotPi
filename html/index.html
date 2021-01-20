@@ -9,6 +9,26 @@
 			function refreshImage(elem,url){
 				elem.src = `${url}?rnd=${Math.random()}`;
 			}
+			function refreshGPS(){
+				$.get("ramdisk/gpsdata",(data)=>{
+					data = JSON.parse(data);
+					console.log(data);
+					const d = new Date(data.time*1000);
+					gpsElem.innerHTML = `
+						<div class='stat'>GPS Time: ${d.toLocaleString()}</div>
+						<div class='stat'>Fix: ${data.fix}, Position: ${Math.round(data.lat*100000)/1000000},${Math.round(data.lon*1000000)/1000000}</div>
+						<div class='stat'>Speed: ${Math.round(data.speed*100)/100}m/s, Altitude: ${Math.round(data.alt*100)/100}m</div>
+						<div class='stat'>HDOP: ${data.hdop}, Sats: ${data.used}/${Object.keys(data.sats).length}</div>
+						<div style='clear:both;'></div>
+						<div id='sats' style='float:none;'>`+
+							Object.keys(data.sats).map(satKey=>{
+								const sat = data.sats[satKey];
+								return `<div class='sat' style='left:${sat.azi/3.6}%;bottom:${(sat.ele%90)/90*250}px;background:hsl(${90*sat.snr/45},100%,50%)'>${satKey}</div>`;
+							}).join("")+
+						`</div>`;
+					setTimeout(refreshGPS,1000);
+				});
+			}
 			function refreshStats(){
 				sendCommand("s");
 			}
@@ -112,6 +132,26 @@
 				background:#444444;
 				color:#AAAAAA;
 			}
+			#gpsElem {width:520px;}
+			#sats {
+				position:relative;
+				width:500px;
+				height:250px;
+				background:#444444;
+				border:solid 1px #BBBBBB;
+				border-radius:1em;
+			}
+			.sat {
+				position:absolute;
+				font-size:12px;
+				width:2em;
+				height:2em;
+				border-radius:1em;
+				text-align:center;
+				line-height: 2em;
+				color:#000000;
+				border:solid 1px #000000;
+			}
 		</style>
 
 	</head>
@@ -172,6 +212,7 @@
 					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/><span class='label'>Automode</span></label>
 				</div>
 				<div class='stats' id='statsdiv'>Stats...</div>
+				<div id='gpsElem'>GPS...</div>
 			</div>
 		</div>
 	</body>
@@ -190,7 +231,8 @@
 			}
 		})
 		refreshStats();
-		refreshImage();
+		//refreshImage();
+		refreshGPS();
 	</script>
 </html>
 
