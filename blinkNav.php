@@ -89,13 +89,6 @@ function detectObstacles($depthMap){
 	$green = imagecolorallocate($navStrip,0,255,0);
 	$red = imagecolorallocate($navStrip,255,0,0);
 	$black = imagecolorallocate($navStrip,0,0,0);
-	/*for($x=0;$x<5;$x++){
-		$o = imagecolorat($navStrip,$x,0)%256;
-		if($o<48){imagesetpixel($navStrip,$x,0,$green);}
-		if($o>76){imagesetpixel($navStrip,$x,0,$red);}
-		if($o>=48 && $o<=76){imagesetpixel($navStrip,$x,0,$black);}
-
-	}*/
 	return $navStrip;
 }
 function executeMoves($move){
@@ -108,19 +101,95 @@ function executeMoves($move){
 				exec("cd html;./fwd.sh 2>&1");
 				break;
 			case "l":
-                                exec("cd html;./left.sh 2>&1");
-                                break;
+                exec("cd html;./left.sh 2>&1");
+                break;
 			case "r":
-                                exec("cd html;./right.sh 2>&1");
-                                break;
+                exec("cd html;./right.sh 2>&1");
+                break;
 			case "b":
-                                exec("cd html;./bwd.sh 2>&1");
-                                break;
-		}
-		//usleep($frameSleep*1000);
+                exec("cd html;./bwd.sh 2>&1");
+                break;
 	}
 }
 $backCount=0;
+function computeMoves($navStrip){
+	global $backCount;
+	$farRight = imagecolorat($navStrip,4,0)%256;
+	$right = imagecolorat($navStrip,3,0)%256;
+	$center = imagecolorat($navStrip,2,0)%256;
+	$left = imagecolorat($navStrip,1,0)%256;
+	$farLeft = imagecolorat($navStrip,0,0)%256;
+	echo("$farLeft,$left,$center,$right,$farRight\n");
+	$move = "f";	
+	/*if(floor($center>>8)%256>0){$move="ff";echo("center green,");}
+	if($farRight>>16){$move = "lf";echo("far right red,");}
+	if($right>>16){$move = "bl";echo("right red,");}
+	if($farLeft>>16){
+		echo("far left red,");
+		if($move=="lb"){$move="bbl";}
+		if($move=="lf"){$move="bl";}
+	}
+	if($left>>16){
+		echo("left red,");
+		if($move=="lf"){$move="rb";}
+		if($move=="lb"){$move="bbr";}
+	}
+	if($center>>16){
+		echo("center red");
+		if(rand(0,2)){
+			$move="bbr";
+		}else{
+			$move="bbl";
+		}
+	}*/
+	$leftObs = $farLeft+2*$left;
+	$rightObs = $farRight+2*$right;
+	$centerObs = $center*3;
+	$move="ff";
+	if($leftObs>=$centerObs && $leftObs>=$rightObs && $leftObs>196){
+		$move="rb";
+	}
+	if($rightObs>=$centerObs && $rightObs>=$leftObs && $rightObs>196){
+		$move="lb";
+	}
+	
+	if($centerObs > 196){
+		$backCount++;
+		if($leftObs>$rightObs){
+			$move="bbr";
+		}else{
+			$move="bbl";
+		}
+		echo("BACKCOUNT: $backCount\n");
+	}
+	if($move=="ff"){$backCount=0;}
+	if($backCount>5){
+		if($leftObs>$rightObs){
+			$d="r";
+		}else{
+			$d="l";
+		}
+		$move="";
+		for($i=0;$i<4;$i++){
+			$move.="bbbb{$d}{$d}{$d}";
+		}
+		$backCount=0;
+	}
+	echo("\n");
+	return $moves;
+}
+function renderHumanOutput($depthMap,$navStrip){
+	global $darkFrame,$lightFrame;
+	$width = imagesx($depthMap);
+	$height = imagesy($depthMap);
+	$robotImage = imagecreatetruecolor($width*3,$height+16);
+	imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
+	imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
+    imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
+	imagecopyresampled($robotImage,$navStrip,0,$height,0,0,$width*3,24,5,1);
+	echo("SAVING ROBOT BRAIN\n\n");
+	imagejpeg($robotImage,"./html/ramdisk/robot.jpg");
+}
 while(true){
 	if(file_exists("./html/ramdisk/autocmd")){
 		if(file_get_contents("./html/ramdisk/autocmd")=="GO"){
@@ -129,84 +198,15 @@ while(true){
 			$depthMap = makeDepthMap();
 			//Find Obstacles
 			echo("DETECTING OBSTACLES\n");
-                        $navStrip = detectObstacles($depthMap);
+            $navStrip = detectObstacles($depthMap);
 			//MoveAccordingly
 			echo("COMPUTING MOVES\n");
-			$farRight = imagecolorat($navStrip,4,0)%256;
-			$right = imagecolorat($navStrip,3,0)%256;
-			$center = imagecolorat($navStrip,2,0)%256;
-			$left = imagecolorat($navStrip,1,0)%256;
-			$farLeft = imagecolorat($navStrip,0,0)%256;
-			echo("$farLeft,$left,$center,$right,$farRight\n");
-			$move = "f";	
-			/*if(floor($center>>8)%256>0){$move="ff";echo("center green,");}
-			if($farRight>>16){$move = "lf";echo("far right red,");}
-			if($right>>16){$move = "bl";echo("right red,");}
-			if($farLeft>>16){
-				echo("far left red,");
-				if($move=="lb"){$move="bbl";}
-				if($move=="lf"){$move="bl";}
-			}
-			if($left>>16){
-				echo("left red,");
-				if($move=="lf"){$move="rb";}
-				if($move=="lb"){$move="bbr";}
-			}
-			if($center>>16){
-				echo("center red");
-				if(rand(0,2)){
-					$move="bbr";
-				}else{
-					$move="bbl";
-				}
-			}*/
-			$leftObs = $farLeft+2*$left;
-			$rightObs = $farRight+2*$right;
-			$centerObs = $center*3;
-			$move="ff";
-			if($leftObs>=$centerObs && $leftObs>=$rightObs && $leftObs>196){
-				$move="rb";
-			}
-			if($rightObs>=$centerObs && $rightObs>=$leftObs && $rightObs>196){
-				$move="lb";
-			}
-			
-			if($centerObs > 196){
-				$backCount++;
-				if($leftObs>$rightObs){
-					$move="bbr";
-				}else{
-					$move="bbl";
-				}
-				echo("BACKCOUNT: $backCount\n");
-			}
-			if($move=="ff"){$backCount=0;}
-			if($backCount>5){
-				if($leftObs>$rightObs){
-					$d="r";
-				}else{
-					$d="l";
-				}
-				$move="bbbb{$d}{$d}{$d}";
-				for($i=0;$i<3;$i++){
-					$move.=$move;
-				}
-				$backCount=0;
-			}
-			echo("\n");
+			$moves = computeMoves($navStrip);
 			echo("DRAWING IMAGE\n");
 			//Show the human
-			$width = imagesx($depthMap);
-			$height = imagesy($depthMap);
-			$robotImage = imagecreatetruecolor($width*3,$height+16);
-			imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
-			imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
-		        imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
-			imagecopyresampled($robotImage,$navStrip,0,$height,0,0,$width,24,5,1);
-			echo("SAVING ROBOT BRAIN\n\n");
-			imagejpeg($robotImage,"./html/ramdisk/robot.jpg");
+			renderHumanOutput($depthMap,$navStrip);
 			echo("EXECUTING MOVES\n");
-                        executeMoves($move);
+            executeMoves($moves);
 		}else{
 			echo("STOP!\n");
 			sleep(5);
