@@ -5,6 +5,7 @@
 			.cmdbtn {font-size:30pt;min-width:4.5cm;min-height:4.5cm}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc5uUlf9y4jiekICYqu1_AwCr8tSfBEGU&callback=initMap&libraries=&v=weekly" defer></script>
 		<script>
 			keyStates = {};
 			function refreshImage(elem,url){
@@ -27,6 +28,8 @@
 								return `<div class='sat' style='left:${sat.azi/3.6}%;bottom:${(sat.ele%90)/90*250}px;background:hsl(${90*sat.snr/45},100%,50%)'>${satKey}</div>`;
 							}).join("")+
 						`</div>`;
+					path.setPath(path.getPath().push({lat:data.lat,lng:data.lon}));
+					map.panTo({lat:data.lat,lng:data.lon});
 					setTimeout(refreshGPS,1000);
 				});
 			}
@@ -214,10 +217,22 @@
 				</div>
 				<div class='stats' id='statsdiv'>Stats...</div>
 				<div id='gpsElem'>GPS...</div>
+				<div id='mapDiv'></div>
 			</div>
 		</div>
 	</body>
 	<script>
+		let map;
+		let path;
+		function initMap() {
+		  map = new google.maps.Map(document.getElementById("mapDiv"), {
+		    center: { lat: -42.0, lng: -71.0 },
+		    zoom: 8,
+		  });
+		  path = new google.maps.Polyline({});
+		  path.setMap(map);
+		}
+
 		cam.onload = function(){
 			setTimeout('refreshImage(cam,"ramdisk/frame.jpg")',255);
 		};
