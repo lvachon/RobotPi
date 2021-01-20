@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<title>Blinky Control Panel</title>
 		<style>
 			.cmdbtn {font-size:30pt;min-width:4.5cm;min-height:4.5cm}
 		</style>
@@ -16,7 +17,7 @@
 					const d = new Date(data.time*1000);
 					gpsElem.innerHTML = `
 						<div class='stat'>GPS Time: ${d.toLocaleString()}</div>
-						<div class='stat'>Fix: ${data.fix}, Position: ${Math.round(data.lat*100000)/1000000},${Math.round(data.lon*1000000)/1000000}</div>
+						<div class='stat'>Fix: ${data.fix}, Position: ${Math.round(data.lat*1000000)/1000000},${Math.round(data.lon*1000000)/1000000}</div>
 						<div class='stat'>Speed: ${Math.round(data.speed*100)/100}m/s, Altitude: ${Math.round(data.alt*100)/100}m</div>
 						<div class='stat'>HDOP: ${data.hdop}, Sats: ${data.used}/${Object.keys(data.sats).length}</div>
 						<div style='clear:both;'></div>
@@ -158,7 +159,7 @@
 	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
 		<div class='container'>
 			<div class='pics'>
-				<img id='cam' src='ramdisk/frame.jpg' style='width:100%;flex-grow:2;'/>
+				<img id='cam' src='ramdisk/frame.jpg' style='width:100%;flex-grow:2;max-height:768px;'/>
 				<img id='robot' src='ramdisk/robot.jpg' style='width:50%;flex-grow:1;'/>
 			</div>
 			<div class='controls'>

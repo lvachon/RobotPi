@@ -109,6 +109,7 @@ function executeMoves($move){
 			case "b":
                 exec("cd html;./bwd.sh 2>&1");
                 break;
+		}
 	}
 }
 $backCount=0;
@@ -176,7 +177,7 @@ function computeMoves($navStrip){
 		$backCount=0;
 	}
 	echo("\n");
-	return $moves;
+	return $move;
 }
 function renderHumanOutput($depthMap,$navStrip){
 	global $darkFrame,$lightFrame;
