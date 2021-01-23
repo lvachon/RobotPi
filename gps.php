@@ -5,6 +5,26 @@ $linesSeen = array(
 	"gga"=>false,
 	"gsv"=>false,
 	"rmc"=>false);
+function saveData(){
+	global $time,$lat,$lon,$speed,$alt,$satsUsed,$hdop,$fixMode,$satsSeen;
+	foreach($satsSeen as $sat=>$stats){
+        	if($stats["time"]<time()-20){
+                                unset($satsSeen[$sat]);
+                        }
+                }
+        $json = json_encode(array(
+                "time"=>$time,
+                "lat"=>$lat,
+                "lon"=>$lon,
+                "speed"=>$speed,
+                "alt"=>$alt,
+             	"used"=>$satsUsed,
+                "hdop"=>$hdop,
+                "fix"=>$fixMode,
+                "sats"=>$satsSeen
+        ));
+        file_put_contents("./html/ramdisk/gpsdata",$json);
+}
 while($line = fgets($gps)){
 	$matches=array();
 	//            $GPGGA,030028.00                     ,4206.46333          ,N     ,07102.09130         ,W     ,1     ,04      ,3.08      ,36.5      ,M,-33.3       ,M,          ,*58
@@ -33,7 +53,7 @@ while($line = fgets($gps)){
 			);
 		}
 //		echo $line;//$matches[1].",".$matches[2]."\n";
-		if($matches[1]==$matches[2]){$linesSeen["gsv"]=true;}
+		if($matches[1]==$matches[2]){$linesSeen["gsv"]=true;saveData();}
 	}
 	//            $GPRMC,032758.00                     ,A   ,4206.46750,N ,07102.09031,W,0.198     ,          ,200121                        ,          ,      ,A*66
 	preg_match('/\$GPRMC,([0-9]{2})([0-9]{2})([0-9\.]+),[AV],[0-9\.]+,[NS],[0-9\.]+,[EW],([0-9\.]+),([0-9\.]*),([0-9]{2})([0-9]{2})([0-9]{2}),([0-9\.]*),([EW]*),.*/',$line,$matches);
@@ -47,23 +67,6 @@ while($line = fgets($gps)){
 		$linesSeen["rmc"]=true;
 	}
 	if($linesSeen["rmc"]==true && $linesSeen["gsv"]==true && $linesSeen["gga"]==true){
-		foreach($satsSeen as $sat=>$stats){
-			if($stats["time"]<time()-20){
-				unset($satsSeen[$sat]);
-			}
-		}
-		$json = json_encode(array(
-			"time"=>$time,
-			"lat"=>$lat,
-			"lon"=>$lon,
-			"speed"=>$speed,
-			"alt"=>$alt,
-			"used"=>$satsUsed,
-			"hdop"=>$hdop,
-			"fix"=>$fixMode,
-			"sats"=>$satsSeen
-		));
-		file_put_contents("./html/ramdisk/gpsdata",$json);
 		
 		file_put_contents("gpslog", json_encode(array(
                         "time"=>$time,
@@ -77,12 +80,10 @@ while($line = fgets($gps)){
                         "seen"=>count($satsSeen),
 			"used"=>$satsUsed
                 	))."\n",FILE_APPEND);
-		echo $json."\n";
 		$linesSeen = array(
 		        "gga"=>false,
 		        "gsv"=>false,
 		        "rmc"=>false);
 	}
-	//var_dump($linesSeen);
 }
 

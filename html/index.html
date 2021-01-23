@@ -2,7 +2,7 @@
 	<head>
 		<title>Blinky Control Panel</title>
 		<style>
-			.cmdbtn {font-size:30pt;min-width:4.5cm;min-height:4.5cm}
+			.cmdbtn {font-size:30pt;min-width:3.5cm;min-height:3.5cm}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc5uUlf9y4jiekICYqu1_AwCr8tSfBEGU&callback=initMap&libraries=&v=weekly" defer></script>
@@ -15,7 +15,7 @@
 				$.get("ramdisk/gpsdata",(data)=>{
 					try{
 						data = JSON.parse(data);
-						console.log(data);
+						console.log(data);		
 						const d = new Date(data.time*1000);
 						gpsElem.innerHTML = `
 							<div class='stat'>GPS Time: ${d.toLocaleString()}</div>
@@ -29,11 +29,12 @@
 									return `<div class='sat' style='left:${sat.azi/3.6}%;bottom:${(sat.ele%90)/90*250}px;background:hsl(${90*sat.snr/45},100%,50%)'>${satKey}</div>`;
 								}).join("")+
 							`</div>`;
-						console.log(path.getPath());
-						pathPoints.push({lat:data.lat,lng:data.lon});
-						path.setPath(pathPoints);
-						marker.setPosition({lat:data.lat,lng:data.lon});
-						map.panTo(marker.getPosition());
+						if(data.lat && data.lon){
+							pathPoints.push({lat:data.lat,lng:data.lon});
+							path.setPath(pathPoints);
+							marker.setPosition({lat:data.lat,lng:data.lon});
+							map.panTo(marker.getPosition());
+						}
 					}catch(e){}
                                         setTimeout(refreshGPS,1000);				
 				});
@@ -41,13 +42,17 @@
 			function refreshStats(){
 				sendCommand("s");
 			}
+			let wait=false;
 			function sendCommand(cmd){
 				
 				if(cmd!=="s"){
 					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
 					statusdiv.innerHTML="Executing...";
 				}
-				$.post("command.php",{cmd:cmd},function(data){
+				if(!wait || cmd=="s"){
+				   
+				   $.post("command.php",{cmd:cmd},function(data){
+					if(cmd!="s"){wait=true;}
 					data = JSON.parse(data);
 					if(data.length){
 						statsdiv.innerHTML = data.reduce((acc,elem)=>{
@@ -57,6 +62,7 @@
 					if(cmd!=="s"){
 						statusdiv.innerHTML="Done";
 						Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
+						wait=false;
 					}else{
 						setTimeout('refreshStats()',5000);
 					}
@@ -68,7 +74,8 @@
 						}
 						return false;
 					});
-				});
+				   });
+				}
 			}
 			function keyDown(e){
 				if(keyStates[e.key]){
@@ -136,6 +143,7 @@
 			body{
 				background:#222222;
 				color:#AAAAAA;
+				padding: 24px;
 			}
 			input{
 				background:#444444;
@@ -221,8 +229,8 @@
 					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/><span class='label'>Automode</span></label>
 				</div>
 				<div class='stats' id='statsdiv'>Stats...</div>
+				<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 				<div id='gpsElem'>GPS...</div>
-				<div id='mapDiv' style='width:520px;height:240px;'></div>
 			</div>
 		</div>
 	</body>
@@ -233,8 +241,10 @@
 		let marker;
 		function initMap() {
 		  map = new google.maps.Map(document.getElementById("mapDiv"), {
-		    center: { lat: 42.0, lng: -71.0 },
-		    zoom: 21,
+		    center: { lat:42.1078586,lng:-71.0347802 },
+		    zoom: 20,
+		    mapTypeId: google.maps.MapTypeId.SATELLITE,
+		    tilt: 0,
 		  });
 		  pathPoints = [];
 		  path = new google.maps.Polyline({path:pathPoints,strokeColor:"#FF0000"});

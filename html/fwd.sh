@@ -1,7 +1,5 @@
 #!/bin/bash
-echo 1 > left_fwd
-echo 1 > right_fwd
+echo "f" > ./ramdisk/motorCommand
 sleep 1
-echo 0 > left_fwd
-echo 0 > right_fwd
-
+echo "s" > ./ramdisk/motorCommand
+sleep 0.1

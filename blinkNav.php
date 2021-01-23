@@ -84,11 +84,18 @@ function makeDepthMap(){
 	return $depthMap;
 }
 function detectObstacles($depthMap){
+	global $refStrip;
 	$navStrip = imagecreatetruecolor(5,1);
+	$refStrip = imagecreatetruecolor(5,1);
 	imagecopyresampled($navStrip,$depthMap,0,0,0,0,5,1,imagesx($depthMap),imagesy($depthMap)/2);
-	$green = imagecolorallocate($navStrip,0,255,0);
-	$red = imagecolorallocate($navStrip,255,0,0);
-	$black = imagecolorallocate($navStrip,0,0,0);
+	imagecopyresampled($refStrip,$depthMap,0,0,0,imagesy($depthMap)/2,5,1,imagesx($depthMap),imagesy($depthMap)/2);
+	$scaleFactor = 255 / (imagecolorat($refStrip,2,0)%256);
+	echo("SCALE FACTOR: {$scaleFactor}\n");
+	for($x=0;$x<5;$x++){
+		$oldPixel = imagecolorat($navStrip,$x,0)%256;
+		$newPixel = imagecolorallocate($navStrip,min(255,$oldPixel*$scaleFactor),min(255,$oldPixel*$scaleFactor),min(255,$oldPixel*$scaleFactor));
+		imagesetpixel($navStrip,$x,0,$newPixel);
+	}
 	return $navStrip;
 }
 function executeMoves($move){
@@ -113,8 +120,9 @@ function executeMoves($move){
 	}
 }
 $backCount=0;
+$obsThresh=256;
 function computeMoves($navStrip){
-	global $backCount;
+	global $backCount,$obsThresh;
 	$farRight = imagecolorat($navStrip,4,0)%256;
 	$right = imagecolorat($navStrip,3,0)%256;
 	$center = imagecolorat($navStrip,2,0)%256;
@@ -143,36 +151,38 @@ function computeMoves($navStrip){
 			$move="bbl";
 		}
 	}*/
-	$leftObs = $farLeft+2*$left;
-	$rightObs = $farRight+2*$right;
-	$centerObs = $center*3;
+	$leftObs = $farLeft+$left;
+	$rightObs = $farRight+$right;
+	$centerObs = $center*2;
 	$move="ff";
-	if($leftObs>=$centerObs && $leftObs>=$rightObs && $leftObs>196){
-		$move="rb";
+	if($leftObs>=$centerObs && $leftObs>=$rightObs && $leftObs>$obsThresh){
+		$move="r";
+		$backCount+=0.5;
 	}
-	if($rightObs>=$centerObs && $rightObs>=$leftObs && $rightObs>196){
-		$move="lb";
+	if($rightObs>=$centerObs && $rightObs>=$leftObs && $rightObs>$obsThresh){
+		$move="l";
+		$backCount+=0.5;
 	}
 	
-	if($centerObs > 196){
+	if($centerObs > $obsThresh){
 		$backCount++;
 		if($leftObs>$rightObs){
-			$move="bbr";
+			$move="br";
 		}else{
-			$move="bbl";
+			$move="bl";
 		}
 		echo("BACKCOUNT: $backCount\n");
 	}
-	if($move=="ff"){$backCount=0;}
-	if($backCount>5){
+	if($move=="ff"){$backCount=max(0,$backCount-1);}
+	if($backCount>3){
 		if($leftObs>$rightObs){
 			$d="r";
 		}else{
 			$d="l";
 		}
-		$move="";
-		for($i=0;$i<4;$i++){
-			$move.="bbbb{$d}{$d}{$d}";
+		$move="bb";
+		for($i=0;$i<8;$i++){
+			$move.=$d;
 		}
 		$backCount=0;
 	}
@@ -180,14 +190,15 @@ function computeMoves($navStrip){
 	return $move;
 }
 function renderHumanOutput($depthMap,$navStrip){
-	global $darkFrame,$lightFrame;
+	global $darkFrame,$lightFrame,$refStrip;
 	$width = imagesx($depthMap);
 	$height = imagesy($depthMap);
-	$robotImage = imagecreatetruecolor($width*3,$height+16);
+	$robotImage = imagecreatetruecolor($width*3,$height+24);
 	imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
 	imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
-    imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
-	imagecopyresampled($robotImage,$navStrip,0,$height,0,0,$width*3,24,5,1);
+	imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
+	imagecopyresampled($robotImage,$navStrip,0,$height,0,0,$width*3,12,5,1);
+	imagecopyresampled($robotImage,$refStrip,0,$height+12,0,0,$width*3,12,5,1);
 	echo("SAVING ROBOT BRAIN\n\n");
 	imagejpeg($robotImage,"./html/ramdisk/robot.jpg");
 }
