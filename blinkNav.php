@@ -19,14 +19,14 @@ while(true){
 			$distances = getToF();
 			echo("{$distances['l']},{$distances['r']}\n");
 			$moves = computeToFMoves($distances);
-			if($moves=="ff" && false){
+			if($moves=="ff"){
 				echo "COMPUTING UV SEEKING MOVES\n";
 				$uvMap = makeUVMap();
 				$uvStrip = seekSources($uvMap);
 				$moves = computeSeekingMoves($uvStrip);
 			}
-			//echo("DRAWING IMAGE\n");
-			//renderHumanOutput($depthMap,$navStrip,$uvMap,$uvStrip);
+			echo("DRAWING IMAGE\n");
+			renderHumanOutput(false,false,$uvMap,$uvStrip);
 			echo("EXECUTING MOVES\n");
 			executeMoves($moves);
 		}else{

@@ -30,18 +30,18 @@ function lum($color){
 }
 function renderHumanOutput($depthMap,$navStrip,$uvMap,$uvStrip){
 	global $darkFrame,$lightFrame,$refStrip,$darkUVFrame,$lightUVFrame;
-	$width = imagesx($depthMap);
-	$height = imagesy($depthMap);
-	$robotImage = imagecreatetruecolor($width*3,$height*2+24);
-	imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
-	imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
-	imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
-	imagecopy($robotImage,$uvMap,0,$height,0,0,$width,$height);
-	imagecopy($robotImage,$darkUVFrame,$width,$height,0,0,$width,$height);
-	imagecopy($robotImage,$lightUVFrame,$width*2,2*$height,0,0,$width,$height);
-	imagecopyresampled($robotImage,$navStrip,0,$height*2,0,0,$width*1.5,12,5,1);
-	imagecopyresampled($robotImage,$refStrip,0,$height*2+12,0,0,$width*1.5,12,5,1);
-	imagecopyresampled($robotImage,$uvStrip,$width*1.5,$height*2,0,0,$width*1.5,24,5,1);
+	$width = imagesx($uvMap);
+	$height = imagesy($uvMap);
+	$robotImage = imagecreatetruecolor($width*3,$height+24);
+	//imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
+	//imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
+	//imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
+	imagecopy($robotImage,$uvMap,0,0,0,0,$width,$height);
+	imagecopy($robotImage,$darkUVFrame,$width,0,0,0,$width,$height);
+	imagecopy($robotImage,$lightUVFrame,$width*2,0,0,0,$width,$height);
+	//imagecopyresampled($robotImage,$navStrip,0,$height*2,0,0,$width*1.5,12,5,1);
+	//imagecopyresampled($robotImage,$refStrip,0,$height*2+12,0,0,$width*1.5,12,5,1);
+	imagecopyresampled($robotImage,$uvStrip,0,$height,0,0,$width*3,24,5,1);
 
 	echo("SAVING ROBOT BRAIN\n\n");
 	imagejpeg($robotImage,"./html/ramdisk/robot.jpg");

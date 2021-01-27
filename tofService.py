@@ -25,13 +25,18 @@ enablePin.value = True
 time.sleep(0.1)
 tofL = VL53L0X(i2c,0x29)
 print(tofL)
+tofR.measurement_timing_budget = 33000
+tofL.measurement_timing_budget = 33000
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 server.settimeout(0.2)
 
 while True:
-    lRange = tofL.range
-    rRange = tofR.range
-    print("Range: {0}mm, {1}mm".format(lRange,rRange))
-    server.sendto("{0},{1}".format(lRange,rRange).encode(),('127.0.0.1',8888))
-    time.sleep(1)
+    try:
+      lRange = tofL.range
+      rRange = tofR.range
+      print("Range: {0}mm, {1}mm".format(lRange,rRange))
+      server.sendto("{0},{1}".format(lRange,rRange).encode(),('127.0.0.1',8888))
+    except:
+      print("ERR")
+    time.sleep(0.5)

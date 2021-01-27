@@ -56,7 +56,7 @@ function seekSources($uvMap){
 	return $navStripUV;
 }
 
-$srcThresh=32;
+$srcThresh=16;
 function computeSeekingMoves($navStrip){
 	global $srcThresh;
 	$farRight = imagecolorat($navStrip,4,0)%256;
