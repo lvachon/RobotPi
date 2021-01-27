@@ -9,6 +9,7 @@ echo "13" > /sys/class/gpio/export
 echo "5" > /sys/class/gpio/export
 echo "26" > /sys/class/gpio/export
 echo "19" > /sys/class/gpio/export
+echo "16" > /sys/class/gpio/export
 
 echo "Waiting for udev..."
 udevadm settle
@@ -21,6 +22,7 @@ echo "out" > /sys/class/gpio/gpio6/direction
 echo "out" > /sys/class/gpio/gpio13/direction
 echo "out" > /sys/class/gpio/gpio5/direction
 echo "out" > /sys/class/gpio/gpio19/direction
+echo "out" > /sys/class/gpio/gpio16/direction
 echo "in" > /sys/class/gpio/gpio26/direction
 echo "Setting value..."
 echo "0" > /sys/class/gpio/gpio4/value
@@ -31,12 +33,15 @@ echo "0" > /sys/class/gpio/gpio6/value
 echo "0" > /sys/class/gpio/gpio13/value
 echo "0" > /sys/class/gpio/gpio5/value
 echo "0" > /sys/class/gpio/gpio9/value
+echo "1" > /sys/class/gpio/gpio16/value
+
 echo "Making links..."
 rm -f /home/pi/RobotPi/html/left_*
 rm -f /home/pi/RobotPi/html/right_*
 rm -f /home/pi/RobotPi/html/led
 rm -f /home/pi/RobotPi/html/uv_led
 rm -f /home/pi/RobotPi/html/vbatt
+rm -f /home/pi/RobotPi/html/tofEnable
 ln -s /sys/class/gpio/gpio4/value /home/pi/RobotPi/html/right_fwd
 ln -s /sys/class/gpio/gpio17/value /home/pi/RobotPi/html/right_bwd
 ln -s /sys/class/gpio/gpio27/value /home/pi/RobotPi/html/left_bwd
@@ -46,6 +51,7 @@ ln -s /sys/class/gpio/gpio13/value /home/pi/RobotPi/html/left_enable
 ln -s /sys/class/gpio/gpio5/value /home/pi/RobotPi/html/led
 ln -s /sys/class/gpio/gpio26/value /home/pi/RobotPi/html/vbatt
 ln -s /sys/class/gpio/gpio19/value /home/pi/RobotPi/html/uv_led
+ln -s /sys/class/gpio/gpio16/value /home/pi/RobotPi/html/tof_Enable
 
 chmod a+rwx /home/pi/RobotPi/html/*
 chown www-data:www-data /home/pi/RobotPi/html/*

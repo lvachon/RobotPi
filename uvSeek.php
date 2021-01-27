@@ -20,11 +20,11 @@ function makeUVMap(){
 	echo("GETTING DARK UV FRAME\n");
 	$darkSize = awaitFrame(filesize($frameFile));
 	$darkUVFrame = imagecreatefromjpeg($frameFile);
-	ledOn();
+	UVOn();
 	echo("GETTING LIGHT UV FRAME\n");
 	awaitFrame(filesize($frameFile));
 	$lightUVFrame = imagecreatefromjpeg($frameFile);
-	ledOff();
+	UVOff();
 	echo("SCALING BY POWER $downsamplePower\n");
 	$darkUVFrame = imagescale($darkUVFrame,imagesx($darkUVFrame)>>$downsamplePower,imagesy($darkUVFrame)>>$downsamplePower);
 	$lightUVFrame = imagescale($lightUVFrame,imagesx($lightUVFrame)>>$downsamplePower,imagesy($lightUVFrame)>>$downsamplePower);
