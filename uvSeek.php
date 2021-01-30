@@ -56,7 +56,7 @@ function seekSources($uvMap){
 	return $navStripUV;
 }
 
-$srcThresh=16;
+$srcThresh=32;
 function computeSeekingMoves($navStrip){
 	global $srcThresh;
 	$farRight = imagecolorat($navStrip,4,0)%256;
@@ -68,12 +68,15 @@ function computeSeekingMoves($navStrip){
 	$leftObs = $farLeft+$left;
 	$rightObs = $farRight+$right;
 	$centerObs = $center*2;
-	$move="ff";
+	$move="f";
 	if($leftObs>=$centerObs && $leftObs>=$rightObs && $leftObs>$srcThresh){
 		$move="l";
 	}
 	if($rightObs>=$centerObs && $rightObs>=$leftObs && $rightObs>$srcThresh){
 		$move="r";
+	}
+	if($centerObs > $leftObs && $centerObs>$rightObs && $centerObs > $srcThresh){
+		$move="ff";
 	}
 	echo("\n");
 	return $move;

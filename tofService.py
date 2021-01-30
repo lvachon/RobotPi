@@ -25,8 +25,8 @@ enablePin.value = True
 time.sleep(0.1)
 tofL = VL53L0X(i2c,0x29)
 print(tofL)
-tofR.measurement_timing_budget = 33000
-tofL.measurement_timing_budget = 33000
+tofR.measurement_timing_budget = 66000
+tofL.measurement_timing_budget = 66000
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 server.settimeout(0.2)
