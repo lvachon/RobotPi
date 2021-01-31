@@ -1,0 +1,5 @@
+{
+	minDist:500,
+	downsamplePower:4,
+	frameSleep:500,
+}

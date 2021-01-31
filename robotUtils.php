@@ -1,4 +1,18 @@
 <?php
+
+function ledOn(){
+        global $frameSleep;
+        echo("LED ON\n");
+        exec("echo 1 > ./html/led");
+        usleep($frameSleep*1000);
+}
+function ledOff(){
+        global $frameSleep;
+        echo("LED OFF\n");
+        exec("echo 0 > ./html/led");
+        usleep($frameSleep*1000);
+}
+
 function awaitFrame($lastSize=0,$timeout=20000){
 	global $frameFile,$frameSleep;
 	$wait=false;
@@ -66,4 +80,8 @@ function executeMoves($move){
                 break;
 		}
 	}
+}
+function writeTelemetry(){
+	global $tele;
+	file_put_contents("./html/ramdisk/telemetry",json_encode($tele));
 }

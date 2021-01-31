@@ -20,8 +20,8 @@ function getToF(){
   return array('l'=>$ranges[0],'r'=>$ranges[1]);
 }
 $backCount=0;
-$minDist = 500;
 $backMove = "r";
+
 function computeToFMoves($distances){
 	global $backCount,$minDist,$backMove;
 	$moves = "ff";
@@ -53,5 +53,6 @@ function computeToFMoves($distances){
 			$backMove = str_replace("b","",$moves);
 		}
 	}
+	$tele['backCount']=$backCount;
 	return $moves;
 }

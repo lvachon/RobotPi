@@ -58,13 +58,14 @@ function seekSources($uvMap){
 
 $srcThresh=32;
 function computeSeekingMoves($navStrip){
-	global $srcThresh;
+	global $srcThresh,$tele;
 	$farRight = imagecolorat($navStrip,4,0)%256;
 	$right = imagecolorat($navStrip,3,0)%256;
 	$center = imagecolorat($navStrip,2,0)%256;
 	$left = imagecolorat($navStrip,1,0)%256;
 	$farLeft = imagecolorat($navStrip,0,0)%256;
 	echo("UV: <$farLeft,[$left,|$center|,$right],$farRight>\n");
+	$tele['uv']=array($farLeft,$left,$center,$right,$farRight);
 	$leftObs = $farLeft+$left;
 	$rightObs = $farRight+$right;
 	$centerObs = $center*2;

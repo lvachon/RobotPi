@@ -11,6 +11,16 @@
 			function refreshImage(elem,url){
 				elem.src = `${url}?rnd=${Math.random()}`;
 			}
+			function refreshTele(){
+				$.get("ramdisk/telemetry",(data)=>{
+					try{
+						data = JSON.parse(data);
+						teleElem.innerHTML = Object.keys(data).map((stat)=>(`<div class='stat'>${stat}:${data[stat]}</div>`)).join("\n");
+					}catch(e){console.error(e);}
+					setTimeout(refreshTele,1000);
+				});
+			}							
+							
 			function refreshGPS(){
 				$.get("ramdisk/gpsdata",(data)=>{
 					try{
@@ -135,7 +145,7 @@
 			.label{
 				display:flex;
 				flex-direction:column;
-			}
+			}	
 			.stats {
 				margin:16px;
 				max-width:520px;
@@ -228,6 +238,7 @@
 					<label><input type='checkbox' onchange='this.checked?sendCommand("l1"):sendCommand("l0");' class='cmdbtn'/><span class='label'>LED</span></label>
 					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/><span class='label'>Automode</span></label>
 				</div>
+				<div class='stats' id='teleElem'>Telemetry...</div>
 				<div class='stats' id='statsdiv'>Stats...</div>
 				<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 				<div id='gpsElem'>GPS...</div>
@@ -255,11 +266,11 @@
 		cam.onload = function(){
 			setTimeout('refreshImage(cam,"ramdisk/frame.jpg")',255);
 		};
-		cam.onerror = cam.onload;
+		cam.onerror = ()=>{setTimeout(cam.onload,5000);};
 		robot.onload = function(){
 			setTimeout('refreshImage(robot,"ramdisk/robot.jpg")',1000);
 		};
-		//robot.onerror = robot.onload;
+		robot.onerror = ()=>{setTimeout(robot.onload,5000);};
 		Array.from(document.getElementsByTagName("input")).forEach(elem=>{
 			if(elem.getAttribute("key")){
 				keyStates[elem.getAttribute("key")]={state:false, elem:elem};
@@ -268,6 +279,7 @@
 		refreshStats();
 		//refreshImage();
 		refreshGPS();
+		refreshTele();
 	</script>
 </html>
 
