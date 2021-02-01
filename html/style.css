@@ -76,3 +76,7 @@ input{
 	color:#000000;
 	border:solid 1px #000000;
 }
+#robot {
+	width:auto!important;
+	height:200px;
+}

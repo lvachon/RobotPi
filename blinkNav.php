@@ -34,6 +34,7 @@ while(true){
 			$tofMoves = computeToFMoves($distances);
 			$tele['tofMoves']=$tofMoves;
 			$seekMoves="";
+			echo "[[[[[[[[[[[[[[[[[{$navMode}]]]]]]]]]]]]]]]]]]]]\n";
 			if($tofMoves!="ff" && $navMode=="UV"){
 				echo "COMPUTING UV SEEKING MOVES\n";
 				$navMap = makeUVMap();

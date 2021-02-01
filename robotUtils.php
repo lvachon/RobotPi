@@ -30,12 +30,13 @@ function awaitFrame($lastSize=0,$timeout=20000){
 	return filesize($frameFile);
 }
 function rgb($color){
-	return array("r"=>$color%256,"g"=>floor($color/255)%256,"b"=>floor($color/65536));
+	return array("b"=>$color%256,"g"=>floor($color/256)%256,"r"=>floor($color/65536));
 }
 function lum($color){
 	$components = rgb($color);
 	$cmax = max($components["r"],max($components["g"],$components["b"]));
 	$cmin = min($components["r"],min($components["g"],$components["b"]));
+	return $cmax;
 	return ($cmin+$cmax)/2;
 	return
 		$components["r"]*0.3333 +
@@ -83,19 +84,20 @@ function readSettings(){
 	static $lastMod = 0;
 	clearstatcache();
 	if(filemtime("./html/botSettings")<=$lastMod){return;}
+	echo "NEW SETTINGS";
 	$lastMod = filemtime("./html/botSettings");
 	$thresh['settingsTime']=$lastMod;
 	$settings = json_decode(file_get_contents("./html/botSettings"));
-	if(intval($settings->minDist)){$minDist=intval($settings->minDist);}
-	if(intval($settings->srcThresh)){$obsThresh=intval($settings->srcThresh);}
-	if(intval($settings->frameSleep)){$frameSleep=intval($settings->frameSleep);}
-	if(intval($settings->downsamplePower)){$downsamplePower=intval($settings->downsamplePower);}
-	if(intval($settings->backLimit)){$backLimit=intval($settings->backLimit);}
-	if(intval($settings->redSeek)){$redSeek=intval($settings->redSeek);}
-	if(intval($settings->blueSeek)){$blueSeek=intval($settings->blueSeek);}
-	if(intval($settings->greenSeek)){$redSeek=intval($settings->greenSeek);}
-	if(intval($settings->colorTolerance)){$colorTolerance=intval($settings->colorTolerance);}
-	if(strlen($settings->navMode)){$navMode=intval($settings->navMode);}
+	if(isset($settings->minDist)){$minDist=intval($settings->minDist);}
+	if(isset($settings->srcThresh)){$obsThresh=intval($settings->srcThresh);}
+	if(isset($settings->frameSleep)){$frameSleep=intval($settings->frameSleep);}
+	if(isset($settings->downsamplePower)){$downsamplePower=intval($settings->downsamplePower);}
+	if(isset($settings->backLimit)){$backLimit=intval($settings->backLimit);}
+	if(isset($settings->redSeek)){$redSeek=intval($settings->redSeek);}
+	if(isset($settings->blueSeek)){$blueSeek=intval($settings->blueSeek);}
+	if(isset($settings->greenSeek)){$greenSeek=intval($settings->greenSeek);}
+	if(isset($settings->colorTolerance)){$colorTolerance=intval($settings->colorTolerance);}
+	if(strlen($settings->navMode)){$navMode=$settings->navMode;}
 
 }
 
