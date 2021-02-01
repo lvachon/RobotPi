@@ -42,21 +42,12 @@ function lum($color){
 		$components["g"]*0.3333 +
 		$components["b"]*0.3333; 
 }
-function renderHumanOutput($depthMap,$navStrip,$uvMap,$uvStrip){
-	global $darkFrame,$lightFrame,$refStrip,$darkUVFrame,$lightUVFrame;
-	$width = imagesx($uvMap);
-	$height = imagesy($uvMap);
-	$robotImage = imagecreatetruecolor($width*3,$height+24);
-	//imagecopy($robotImage,$depthMap,0,0,0,0,$width,$height);
-	//imagecopy($robotImage,$darkFrame,$width,0,0,0,$width,$height);
-	//imagecopy($robotImage,$lightFrame,$width*2,0,0,0,$width,$height);
-	imagecopy($robotImage,$uvMap,0,0,0,0,$width,$height);
-	imagecopy($robotImage,$darkUVFrame,$width,0,0,0,$width,$height);
-	imagecopy($robotImage,$lightUVFrame,$width*2,0,0,0,$width,$height);
-	//imagecopyresampled($robotImage,$navStrip,0,$height*2,0,0,$width*1.5,12,5,1);
-	//imagecopyresampled($robotImage,$refStrip,0,$height*2+12,0,0,$width*1.5,12,5,1);
-	imagecopyresampled($robotImage,$uvStrip,0,$height,0,0,$width*3,24,5,1);
-
+function renderHumanOutput($navMap,$navStrip){
+	$width = imagesx($navMap);
+	$height = imagesy($navMap);
+	$robotImage = imagecreatetruecolor($width,$height+24);
+	imagecopy($robotImage,$navMap,0,0,0,0,$width,$height);
+	imagecopyresampled($robotImage,$navStrip,0,$height,0,0,$width,24,5,1);
 	echo("SAVING ROBOT BRAIN\n\n");
 	imagejpeg($robotImage,"./html/ramdisk/robot.jpg");
 }
@@ -88,7 +79,7 @@ function writeTelemetry(){
 }
 
 function readSettings(){
-	global $minDist,$obsThresh,$frameSleep,$downsamplePower,$backLimit,$thresh;
+	global $minDist,$obsThresh,$frameSleep,$downsamplePower,$backLimit,$thresh,$redSeek,$blueSeek,$greenSeek,$colorTolerance,$navMode;
 	static $lastMod = 0;
 	clearstatcache();
 	if(filemtime("./html/botSettings")<=$lastMod){return;}
@@ -100,6 +91,12 @@ function readSettings(){
 	if(intval($settings->frameSleep)){$frameSleep=intval($settings->frameSleep);}
 	if(intval($settings->downsamplePower)){$downsamplePower=intval($settings->downsamplePower);}
 	if(intval($settings->backLimit)){$backLimit=intval($settings->backLimit);}
+	if(intval($settings->redSeek)){$redSeek=intval($settings->redSeek);}
+	if(intval($settings->blueSeek)){$blueSeek=intval($settings->blueSeek);}
+	if(intval($settings->greenSeek)){$redSeek=intval($settings->greenSeek);}
+	if(intval($settings->colorTolerance)){$colorTolerance=intval($settings->colorTolerance);}
+	if(strlen($settings->navMode)){$navMode=intval($settings->navMode);}
+
 }
 
 

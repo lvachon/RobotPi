@@ -1,1 +1,1 @@
-{"minDist":"750","srcThresh":"32","frameSleep":"500","backLimit":"3","downsamplePower":"4"}
+{"minDist":"750","srcThresh":"32","frameSleep":"500","backLimit":"3","downsamplePower":"4","redSeek":255,"greenSeek":0,"blueSeek":0,"colorTolerance":16}

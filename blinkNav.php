@@ -11,6 +11,8 @@ include 'robotUtils.php';
 //include 'blinkDepth.php';
 echo "uvSeek\n";
 include 'uvSeek.php';
+echo "colorSeek\n";
+include 'colorSeek.php';
 echo "tofClient\n";
 include 'tofClient.php';
 echo "main\n";
@@ -31,47 +33,52 @@ while(true){
 			echo("{$distances['l']},{$distances['r']}\n");
 			$tofMoves = computeToFMoves($distances);
 			$tele['tofMoves']=$tofMoves;
-			$uvMoves="";
-			if($tofMoves!="ff"){
+			$seekMoves="";
+			if($tofMoves!="ff" && $navMode=="UV"){
 				echo "COMPUTING UV SEEKING MOVES\n";
-				$uvMap = makeUVMap();
-				$uvStrip = seekSources($uvMap);
-				$uvMoves = computeSeekingMoves($uvStrip);
+				$navMap = makeUVMap();
+				$navStrip = seekSources($navMap);
+				$seekMoves = computeSeekingMoves($navStrip);
 			}
-			$tele['uvMoves']=$uvMoves;
+			if($navMode=="Color"){
+				echo "COMPUTING COLOR SEEKING MOVES\n";
+				$navMap = makeColorMap();
+				$navStrip = seekColorSources($navMap);
+				$seekMoves = computeSeekingMoves($navStrip);
+			}
+			$tele['seekMoves']=$seekMoves;
 			$moves=$tofMoves;//By default avoid obstacles
 			if($tofMoves!="ff"){
 				$tele['phase']="Avoid";
-				if($uvMoves=="ff"){
-					//obstacle detected
-					//but it's a uv target in the middle
+				if($seekMoves=="ff"){
+					//obstacle detected but it's a seek target in the middle
 					$moves="";
 					echo "FOUND TARGET\n";
-					$tele['phase']="UV Found";
+					$tele['phase']="Target Found";
 				}
 			}else{
 				//no obstacles detected
 				$tele['phase']="Travel";
-				if(strlen($uvMoves)){
+				if(strlen($seekMoves)){
 					$tele['phase']="Seek";
-					$moves=$uvMoves;
+					$moves=$seekMoves;
 				}
 			}
-			if($tofMoves=="r" && $uvMoves=="l"){
-				//uv obstacle detected to the left
+			if($tofMoves=="r" && $seekMoves=="l"){
+				//target obstacle detected to the left
 				$tele['phase']="Target Left";
 				$moves="l";
 			}
-			if($tofMoves=="l" && $uvMoves=="r"){
-				//uv obstacle detected to the right
+			if($tofMoves=="l" && $seekMoves=="r"){
+				//target obstacle detected to the right
 				$tele['phase']="Target Right";
 				$moves="r";
 			}
 			$tele['moves']=$moves;
-			echo "$tofMoves, $uvMoves\n";
-			if($uvMap && $uvStrip){
+			echo "$tofMoves, $seekMoves\n";
+			if($navMap && $navStrip){
 				echo("DRAWING IMAGE\n");
-				renderHumanOutput(false,false,$uvMap,$uvStrip);
+				renderHumanOutput($navMap,$navStrip);
 			}
 			echo("EXECUTING MOVES\n");
 			executeMoves($moves);
