@@ -1,13 +1,44 @@
 <html>
 	<head>
 		<title>Blinky Control Panel</title>
-		<style>
-			.cmdbtn {font-size:30pt;min-width:3.5cm;min-height:3.5cm}
-		</style>
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc5uUlf9y4jiekICYqu1_AwCr8tSfBEGU&callback=initMap&libraries=&v=weekly" defer></script>
 		<script>
 			keyStates = {};
+			const settings = [
+				'minDist',
+				'srcThresh',
+				'frameSleep',
+				'backLimit',
+				'downsamplePower',
+			];
+			function writeSettings(){
+				const newSettings = {};
+				settings.forEach(key=>{
+					newSettings[key]=document.getElementById(key).value;
+				});
+				$.post("writeSettings.php",newSettings);
+
+			}
+			function readSettings(){
+				$.get("botSettings.json",(data)=>{
+					console.log(data);
+					Object.keys(data).forEach(key=>{
+						document.getElementById(key).value=data[key];
+					});
+					setTimeout(readSettings,30000);
+				});
+			}
+			function initSettings(){
+				settingsElem.innerHTML = settings.map(key=>(`
+					<label>
+						${key}
+						<input type='text' class'='setting' id='${key}' value='' placeholder='X'/>
+					</label>`)
+				).join("<br/>\n")+`<input type='button' value='Save' onclick='writeSettings();'/>`;
+				readSettings();
+			}
 			function refreshImage(elem,url){
 				elem.src = `${url}?rnd=${Math.random()}`;
 			}
@@ -101,85 +132,7 @@
 				}
 			}
 		</script>
-		<style>
-			.container {
-                                display: flex;
-                                flex-direction:row;
-                                width: 100%;
-                        }
-			@media screen and (max-width: 1440px) {
- 			   .container {
-			        flex-direction:column;
-			    }
-			}
-			.controls {
-				flex-grow: 1;
-				flex-shrink: 1;
-				display:flex;
-				align-items:center;
-				flex-direction:column;
-				min-width:520px;
-			}
-			.pics {
-				flex-grow: 3;
-				flex-shrink: 1;
-				flex-direction:column;
-			}
-			.stat {
-				border: solid 1px #BBBBBB;
-				background: #333333;
-				border-radius:4px;
-				margin:4px;
-				display:block;
-				float:left;
-				text-align:center;
-				padding:2px;
-				white-space:nowrap;
-
-			}
-			label{
-				display:flex;
-				align-items:center;
-				flex-direction:column;
-			}
-			.label{
-				display:flex;
-				flex-direction:column;
-			}	
-			.stats {
-				margin:16px;
-				max-width:520px;
-			}
-			body{
-				background:#222222;
-				color:#AAAAAA;
-				padding: 24px;
-			}
-			input{
-				background:#444444;
-				color:#AAAAAA;
-			}
-			#gpsElem {width:520px;}
-			#sats {
-				position:relative;
-				width:500px;
-				height:250px;
-				background:#444444;
-				border:solid 1px #BBBBBB;
-				border-radius:1em;
-			}
-			.sat {
-				position:absolute;
-				font-size:12px;
-				width:2em;
-				height:2em;
-				border-radius:1em;
-				text-align:center;
-				line-height: 2em;
-				color:#000000;
-				border:solid 1px #000000;
-			}
-		</style>
+		<link href='style.css' rel='stylesheet'/>
 
 	</head>
 	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
@@ -242,6 +195,7 @@
 				<div class='stats' id='statsdiv'>Stats...</div>
 				<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 				<div id='gpsElem'>GPS...</div>
+				<div id='settingsElem'>Settings...</div>
 			</div>
 		</div>
 	</body>
@@ -280,6 +234,7 @@
 		//refreshImage();
 		refreshGPS();
 		refreshTele();
+		initSettings();
 	</script>
 </html>
 
