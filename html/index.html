@@ -22,13 +22,19 @@
 
 			}
 			function readSettings(){
-				$.get("botSettings.json",(data)=>{
-					console.log(data);
-					Object.keys(data).forEach(key=>{
-						document.getElementById(key).value=data[key];
-					});
+				console.log("readSettings");
+				$.get("botSettings",(sdata)=>{
+					try{
+						sdata=JSON.parse(sdata);
+						Object.keys(sdata).forEach(key=>{
+							document.getElementById(key).value=sdata[key];
+						});
+					}catch(e){
+						console.error(e);
+					}
 					setTimeout(readSettings,30000);
 				});
+				console.log("settings read");
 			}
 			function initSettings(){
 				settingsElem.innerHTML = settings.map(key=>(`
@@ -36,7 +42,7 @@
 						${key}
 						<input type='text' class'='setting' id='${key}' value='' placeholder='X'/>
 					</label>`)
-				).join("<br/>\n")+`<input type='button' value='Save' onclick='writeSettings();'/>`;
+				).join("\n")+`<input type='button' value='Save' onclick='writeSettings();'/>`;
 				readSettings();
 			}
 			function refreshImage(elem,url){
@@ -48,7 +54,7 @@
 						data = JSON.parse(data);
 						teleElem.innerHTML = Object.keys(data).map((stat)=>(`<div class='stat'>${stat}:${data[stat]}</div>`)).join("\n");
 					}catch(e){console.error(e);}
-					setTimeout(refreshTele,1000);
+					setTimeout(refreshTele,500);
 				});
 			}							
 							

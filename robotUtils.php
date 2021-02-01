@@ -91,15 +91,15 @@ function readSettings(){
 	global $minDist,$obsThresh,$frameSleep,$downsamplePower,$backLimit,$thresh;
 	static $lastMod = 0;
 	clearstatcache();
-	if(filemtime("./html/botSettings.json")<=$lastMod){return;}
-	$lastMod = filemtime("./html/botSettings.json");
+	if(filemtime("./html/botSettings")<=$lastMod){return;}
+	$lastMod = filemtime("./html/botSettings");
 	$thresh['settingsTime']=$lastMod;
-	$settings = json_decode(file_get_contents("./html/botSettings.json"));
-	if(intval($settings['minDist'])){$minDist=intval($settings['minDist']);}
-	if(intval($settings['srcThresh'])){$obsThresh=intval($settings['srcThresh']);}
-	if(intval($settings['frameSleep'])){$frameSleep=intval($settings['frameSleep']);}
-	if(intval($settings['downsamplePower'])){$downsamplePower=intval($settings['downsamplePower']);}
-	if(intval($settings['backLimit'])){$backLimit=intval($settings['backLimit']);}
+	$settings = json_decode(file_get_contents("./html/botSettings"));
+	if(intval($settings->minDist)){$minDist=intval($settings->minDist);}
+	if(intval($settings->srcThresh)){$obsThresh=intval($settings->srcThresh);}
+	if(intval($settings->frameSleep)){$frameSleep=intval($settings->frameSleep);}
+	if(intval($settings->downsamplePower)){$downsamplePower=intval($settings->downsamplePower);}
+	if(intval($settings->backLimit)){$backLimit=intval($settings->backLimit);}
 }
 
 
