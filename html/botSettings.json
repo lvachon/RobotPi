@@ -1,5 +1,7 @@
 {
 	minDist:500,
+	obsThresh:32,
 	downsamplePower:4,
 	frameSleep:500,
+	backLimit:3
 }

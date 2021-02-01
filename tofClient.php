@@ -21,9 +21,9 @@ function getToF(){
 }
 $backCount=0;
 $backMove = "r";
-
+$backLimit=3;
 function computeToFMoves($distances){
-	global $backCount,$minDist,$backMove;
+	global $backCount,$minDist,$backMove,$tele,$backLimit;
 	$moves = "ff";
 	if($distances['l']<$distances['r'] && $distances['l']<$minDist){
         	if($distances['l']<$minDist/2){
@@ -46,7 +46,7 @@ function computeToFMoves($distances){
 	if($moves=="ff"){
 		$backCount=max(0,$backCount-1);
 	}else{
-		if($backCount>=3){
+		if($backCount>=$backLimit){
 			$moves=$backMove;
 			$backCount=3;
 		}else{

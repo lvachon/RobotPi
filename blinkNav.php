@@ -14,10 +14,10 @@ include 'uvSeek.php';
 echo "tofClient\n";
 include 'tofClient.php';
 echo "main\n";
-
 while(true){
 	echo "...\n";
 	if(file_exists("./html/ramdisk/autocmd")){
+		readSettings();
 		if(file_get_contents("./html/ramdisk/autocmd")=="GO"){
 			//echo("GO!  MAKING DEPTH MAP\n");
 			//$depthMap = makeDepthMap();

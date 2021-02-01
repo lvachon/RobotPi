@@ -83,5 +83,23 @@ function executeMoves($move){
 }
 function writeTelemetry(){
 	global $tele;
+	$tele['time']=time();
 	file_put_contents("./html/ramdisk/telemetry",json_encode($tele));
 }
+
+function readSettings(){
+	global $minDist,$obsThresh,$frameSleep,$downsamplePower,$backLimit,$thresh;
+	static $lastMod = 0;
+	clearstatcache();
+	if(filemtime("./html/botSettings.json")<=$lastMod){return;}
+	$lastMod = filemtime("./html/botSettings.json");
+	$thresh['settingsTime']=$lastMod;
+	$settings = json_decode(file_get_contents("./html/botSettings.json"));
+	if(intval($settings['minDist'])){$minDist=intval($settings['minDist']);}
+	if(intval($settings['srcThresh'])){$obsThresh=intval($settings['srcThresh']);}
+	if(intval($settings['frameSleep'])){$frameSleep=intval($settings['frameSleep']);}
+	if(intval($settings['downsamplePower'])){$downsamplePower=intval($settings['downsamplePower']);}
+	if(intval($settings['backLimit'])){$backLimit=intval($settings['backLimit']);}
+}
+
+
