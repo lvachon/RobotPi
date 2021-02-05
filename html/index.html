@@ -27,7 +27,6 @@
 
 			}
 			function readSettings(){
-				console.log("readSettings");
 				$.get("botSettings",(sdata)=>{
 					try{
 						sdata=JSON.parse(sdata);
@@ -37,15 +36,14 @@
 					}catch(e){
 						console.error(e);
 					}
-					setTimeout(readSettings,30000);
+					//setTimeout(readSettings,30000);
 				});
-				console.log("settings read");
 			}
 			function initSettings(){
 				settingsElem.innerHTML = settings.map(key=>(`
-					<label>
+					<label class='settinglabel'>
 						${key}
-						<input type='text' class'='setting' id='${key}' value='' placeholder='X'/>
+						<input type='text' class='setting' id='${key}' value='' placeholder='X'/>
 					</label>`)
 				).join("\n")+`<input type='button' value='Save' onclick='writeSettings();'/>`;
 				readSettings();
@@ -67,7 +65,6 @@
 				$.get("ramdisk/gpsdata",(data)=>{
 					try{
 						data = JSON.parse(data);
-						console.log(data);		
 						const d = new Date(data.time*1000);
 						gpsElem.innerHTML = `
 							<div class='stat'>GPS Time: ${d.toLocaleString()}</div>
@@ -142,6 +139,28 @@
 					keyStates[e.key].state=false;
 				}
 			}
+			function getColor(event){
+				console.log(event);
+				const ctx = canv.getContext('2d');
+				ctx.drawImage(
+					cam,
+					event.offsetX*(event.target.naturalWidth/event.target.offsetWidth),
+					event.offsetY*(event.target.naturalHeight/event.target.offsetHeight),
+					1,
+					1,
+					0,
+					0,
+					cam.width,
+					cam.height
+				);
+				const idata = ctx.getImageData(0,0,1,1);
+				let [red,green,blue,alpha] = idata.data;
+				const maxVal = Math.max(red,Math.max(green,blue));
+				const scale = 255.0/maxVal;
+				redSeek.value=Math.floor(red*scale);
+				greenSeek.value=Math.floor(green*scale);
+				blueSeek.value=Math.floor(blue*scale);
+			}
 		</script>
 		<link href='style.css' rel='stylesheet'/>
 
@@ -149,8 +168,9 @@
 	<body onkeydown='keyDown(event)' onkeyup='keyUp(event)'>
 		<div class='container'>
 			<div class='pics'>
-				<img id='cam' src='ramdisk/frame.jpg' style='width:100%;flex-grow:2;max-height:768px;'/>
+				<img id='cam' onclick='getColor(event)' src='ramdisk/frame.jpg' style='width:100%;flex-grow:2;max-height:768px;'/>
 				<img id='robot' src='ramdisk/robot.jpg' style='width:50%;flex-grow:1;'/>
+				<canvas id='canv' width='178' height='134'></canvas> 
 			</div>
 			<div class='controls'>
 				<div id='statusdiv' >Ready</div>

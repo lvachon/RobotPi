@@ -80,3 +80,18 @@ input{
 	width:auto!important;
 	height:200px;
 }
+#settingsElem{
+	max-width:520px;
+}
+.setting{
+	width:5em;
+	float:right;
+	margin-right:2px;
+}
+.settinglabel{
+	float:left;
+	display:block;
+	margin:8px
+	padding:2px;
+	width:200px;
+}
