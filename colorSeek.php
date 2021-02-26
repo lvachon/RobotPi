@@ -12,6 +12,7 @@ function hue($c){
 	$cmax = max($c['r'],max($c['g'],$c['b']));
         $cmin = min($c['r'],min($c['g'],$c['b']));
         $delta = $cmax-$cmin;
+	if($delta==0){return false;}
         if($c['r']==$cmax){$hue = 60 * (($c['g']-$c['b'])/$delta);}
         if($c['g']==$cmax){$hue = 60 * (($c['b']-$c['r'])/$delta+2);}
         if($c['b']==$cmax){$hue = 60 * (($c['r']-$c['g'])/$delta+4);}
@@ -62,15 +63,18 @@ function makeColorMap(){
 			$dist=sqrt(dist($c['r'],$redSeek)+dist($c['g'],$greenSeek)+dist($c['b'],$blueSeek));
 			*/
 			$hue = hue($c);
-			if($hue<-180){$hue+=360;}
-			if($hue>180){$hue-=360;}
-			if(abs($hue-$tHue)>$colorTolerance){
-				$oc=$c;
-				$c=array('r'=>0,'g'=>0,'b'=>0);
-			}else{
-				$c=hue2rgb($hue);
+			if($hue===false){$fullPixel=imagecolorallocate($colorMap,0,0,0);}
+			else{
+				if($hue<-180){$hue+=360;}
+				if($hue>180){$hue-=360;}
+				if(abs($hue-$tHue)>$colorTolerance){
+					$oc=$c;
+					$c=array('r'=>0,'g'=>0,'b'=>0);
+				}else{
+					$c=hue2rgb($hue);
+				}
+				$fullPixel = imagecolorallocate($colorMap,$c["r"],$c["g"],$c["b"]);
 			}
-			$fullPixel = imagecolorallocate($colorMap,$c["r"],$c["g"],$c["b"]);
 			imagesetpixel($colorMap,$x,$y,$fullPixel);
 		}
 	}

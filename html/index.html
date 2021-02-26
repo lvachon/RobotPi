@@ -57,7 +57,7 @@
 						data = JSON.parse(data);
 						teleElem.innerHTML = Object.keys(data).map((stat)=>(`<div class='stat'>${stat}:${data[stat]}</div>`)).join("\n");
 					}catch(e){console.error(e);}
-					setTimeout(refreshTele,500);
+					setTimeout(refreshTele,2000);
 				});
 			}							
 							
@@ -88,33 +88,26 @@
                                         setTimeout(refreshGPS,1000);				
 				});
 			}
-			function refreshStats(){
-				sendCommand("s");
-			}
 			let wait=false;
 			function sendCommand(cmd){
 				
-				if(cmd!=="s"){
-					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
-					statusdiv.innerHTML="Executing...";
-				}
-				if(!wait || cmd=="s"){
+				Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=true;});
+				statusdiv.innerHTML="Executing...";
+				if(!wait){
 				   
 				   $.post("command.php",{cmd:cmd},function(data){
-					if(cmd!="s"){wait=true;}
+					wait=true;
 					data = JSON.parse(data);
 					if(data.length){
-						statsdiv.innerHTML = data.reduce((acc,elem)=>{
-							return acc+=`<div class='stat'>${elem}</div>`;
-						},"");
+						statsdiv.innerHTML = `<table>`+data.reduce((acc,elem)=>{
+							console.log(elem);
+							const parts = elem.split("=")
+							return acc+=`<tr class='stat'><td>${parts[0]}</td><td>{$parts[1]}</td></tr>`;
+						},"")+'</table>';
 					}
-					if(cmd!=="s"){
-						statusdiv.innerHTML="Done";
-						Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
-						wait=false;
-					}else{
-						setTimeout('refreshStats()',5000);
-					}
+					statusdiv.innerHTML="Done";
+					Array.from(document.getElementsByClassName("cmdbtn")).forEach(elem=>{elem.disabled=false;});
+					wait=false;
 					
 					Object.keys(keyStates).some(key=>{
 						if(keyStates[key].state){
@@ -222,11 +215,10 @@
 					<label><input type='checkbox' onchange='this.checked?sendCommand("l1"):sendCommand("l0");' class='cmdbtn'/><span class='label'>LED</span></label>
 					<label><input type='checkbox' onchange='this.checked?sendCommand("a1"):sendCommand("a0");' class='cmdbtn'/><span class='label'>Automode</span></label>
 				</div>
+				<div id='settingsElem'>Settings...</div>
 				<div class='stats' id='teleElem'>Telemetry...</div>
-				<div class='stats' id='statsdiv'>Stats...</div>
 				<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 				<div id='gpsElem'>GPS...</div>
-				<div id='settingsElem'>Settings...</div>
 			</div>
 		</div>
 	</body>
@@ -249,7 +241,7 @@
 		}
 
 		cam.onload = function(){
-			setTimeout('refreshImage(cam,"ramdisk/frame.jpg")',255);
+			setTimeout('refreshImage(cam,"ramdisk/frame.jpg")',1000);
 		};
 		cam.onerror = ()=>{setTimeout(cam.onload,5000);};
 		robot.onload = function(){
@@ -261,7 +253,7 @@
 				keyStates[elem.getAttribute("key")]={state:false, elem:elem};
 			}
 		})
-		refreshStats();
+		//refreshStats();
 		//refreshImage();
 		refreshGPS();
 		refreshTele();

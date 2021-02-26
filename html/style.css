@@ -32,7 +32,8 @@
 	text-align:center;
 	padding:2px;
 	white-space:nowrap;
-
+	font-size:1cm;
+	width:400px;
 }
 label{
 	display:flex;
@@ -64,6 +65,7 @@ input{
 	background:#444444;
 	border:solid 1px #BBBBBB;
 	border-radius:1em;
+	font-size:1cm;
 }
 .sat {
 	position:absolute;
@@ -82,7 +84,12 @@ input{
 }
 #settingsElem{
 	max-width:520px;
+	font-size:1cm;
 }
+#settingsElem input{
+	font-size:1cm;
+}
+
 .setting{
 	width:5em;
 	float:right;
@@ -93,5 +100,5 @@ input{
 	display:block;
 	margin:8px
 	padding:2px;
-	width:200px;
+	width:500px;
 }

@@ -1,7 +1,7 @@
 <?php
 $frameFile = "./html/ramdisk/frame.jpg";
 $settings = json_decode(file_get_contents("./html/botSettings.json"));
-$frameSleep = 500;//ms
+$frameSleep = 250;//ms
 $minDist = 750;//mm
 $downsamplePower = 4;//width/2^x
 $tele = array();
