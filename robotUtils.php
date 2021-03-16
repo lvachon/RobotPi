@@ -1,4 +1,9 @@
 <?php
+//Init LoRa
+exec("printf 'AT+PARAMETER=7,7,1,6\\r\\n' > /dev/serial0");
+function getGPS(){
+	return json_decode(file_get_contents("./html/ramdisk/gpsdata"));
+}
 
 function ledOn(){
         global $frameSleep;
@@ -77,6 +82,14 @@ function writeTelemetry(){
 	global $tele;
 	$tele['time']=time();
 	file_put_contents("./html/ramdisk/telemetry",json_encode($tele));
+	$lorastring="MODE: ${tele['phase']}";
+	$lorastring.=",MOVES: ${tele['moves']}";
+	$pos = getGPS();
+	$lorastring.=",POS:".strval(floor($pos['lat']*1000)/10000).",".strval(floor($pos['lon']*1000)/1000);
+	$lorastring.=",TOF:{$tele['distances'][0]},{$tele['distances'][1]}";
+	$lorastring.=",SEEK:".implode('',$tele['seek']);
+	echo("printf 'AT+SEND=0,".strlen($lorastring).",".$lorastring."\\r\\n' > /dev/serial0");
+	exec("printf 'AT+SEND=0,".strlen($lorastring).",".$lorastring."\\r\\n' > /dev/serial0");
 }
 
 function readSettings(){
