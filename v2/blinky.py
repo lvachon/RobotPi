@@ -203,7 +203,8 @@ def executeMoves(moves):
 			bwd(1)
 
 def readSettings():
-	if(os.path.getmtime('../html/botSettings')<=status['settingsMod']):
+	global settingsMod
+	if(os.path.getmtime('../html/botSettings')<=settingsMod):
 		return
 	f = open('../html/botSettings')
 	s = json.load(f)
@@ -213,6 +214,7 @@ def readSettings():
 		else:
 			settings[key]=s[key]
 	f.close()
+	settingsMod=time.time()
 
 def writeTelemetry():
 	status['time']=time.strftime('%H:%M:%S')
@@ -224,9 +226,10 @@ def writeTelemetry():
 
 print("Init params")
 settings = {'srcThresh':32,'backLimit':3, 'minDist':750,'mode':'UV'}
-status = {'backCount':0,'settingsMod':0}
+status = {'backCount':0}
 tofL=0
 tofR=0
+settingsMod=0
 
 print("Init GPIO")
 led = digitalio.DigitalInOut(board.D5)
@@ -285,7 +288,8 @@ while True:
 	if(tofMoves!="f"):
 		status['phase']='avoid'
 		if(seekMoves=="f"):
-			status['phase']='target found'
+			status['phase']='found'
+			status['backCount']=0
 			moves = ""
 	else:
 		status['phase']='travel'
@@ -293,14 +297,12 @@ while True:
 			status['phase']='seek'
 			moves=seekMoves
 	if(tofMoves=="r" and seekMoves=="l"):
-		status['phase']='target left'
+		status['phase']='t-left'
 		moves="l"
 	if(tofMoves=="l" and seekMoves=="r"):
-		status['phase']='target right'
+		status['phase']='t- right'
 		moves="r"
 	status['moves']=moves
-	status['tofMoves']=tofMoves
-	status['seekMoves']=seekMoves
 	status['tof']=tof
 	executeMoves(moves)
 	print(status)
