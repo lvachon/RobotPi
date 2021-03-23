@@ -21,10 +21,12 @@ def awb():
 	camera.awb_gains = g
 def getFrame():
 	frame = np.empty((imgHeight,imgWidth,3),dtype=np.uint8)
-	camera.capture_sequence([frame],'rgb',True)
+	camera.capture_sequence([frame],'rgb',True,(64,48))
 	return frame
 def getGPS():
-	gpsData = json.load(open('/home/pi/RobotPi/html/ramdisk/gpsdata'))
+	f = open('/home/pi/RobotPi/html/ramdisk/gpsdata')
+	gpsData = json.load(f)
+	f.close()
 	return gpsData
 def ledOn():
 	led.value=True
@@ -69,7 +71,7 @@ def getTof():
 		print(e)
 		lRange = -1
 		rRange = -1
-	return (lRange,rRange)
+	return [lRange,rRange]
 
 def fwd(secs):
 	rightB.value=False
@@ -148,15 +150,17 @@ def seek(map):
 			for x in range(0,(int)(bin*(imgWidth-1)/5)):
 				for i in range(0,2):
 					bins[bin]+=map[y][x][i]
+	for i in range(0,4):
+		bins[i]=(int)(bins[i]/(imgHeight*imgWidth/5*3))
 	moves = ""
 	leftSrc = bins[0]+bins[1]
 	centerSrc = bins[2]*2
 	rightSrc = bins[3]+bins[4]
-	if(leftSrc>=centerSrc and leftSrc>=rightSrc and leftSrc>=settings.get('srcThresh')*imgHeight*imgWidth/5*3):
+	if(leftSrc>=centerSrc and leftSrc>=rightSrc and leftSrc>=settings.get('srcThresh')):
 		moves="l"
-	if(rightSrc>=centerSrc and rightSrc>=leftSrc and rightSrc>=settings.get('srcThresh')*imgHeight*imgWidth/5*3):
+	if(rightSrc>=centerSrc and rightSrc>=leftSrc and rightSrc>=settings.get('srcThresh')):
                 moves="r"
-	if(centerSrc > leftSrc and centerSrc > rightSrc and centerSrc > settings.get('srcThresh')*imgHeight*imgWidth/5*3):
+	if(centerSrc > leftSrc and centerSrc > rightSrc and centerSrc > settings.get('srcThresh')):
 		moves="f"
 	status['seek']=bins
 	return moves
@@ -198,9 +202,29 @@ def executeMoves(moves):
 		if(a=="b"):
 			bwd(1)
 
+def readSettings():
+	if(os.path.getmtime('../html/botSettings')<=status['settingsMod']):
+		return
+	f = open('../html/botSettings')
+	s = json.load(f)
+	for key in s:
+		if(s[key].isnumeric()):
+			settings[key]=int(s[key])
+		else:
+			settings[key]=s[key]
+	f.close()
+
+def writeTelemetry():
+	status['time']=time.strftime('%H:%M:%S')
+	f = open('../html/ramdisk/telemetry','w')
+	jstring = repr(status).replace("'","\"")
+	f.write(jstring)
+	f.close()
+	os.system("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
+
 print("Init params")
 settings = {'srcThresh':32,'backLimit':3, 'minDist':750,'mode':'UV'}
-status = {'backCount':0}
+status = {'backCount':0,'settingsMod':0}
 tofL=0
 tofR=0
 
@@ -238,14 +262,17 @@ leftE.value = False
 print("Init camera")
 imgWidth=64
 imgHeight=48
+humanWidth=640
+humanHeight=480
 camera = PiCamera()
-camera.resolution = (imgWidth, imgHeight)
-camera.framerate = 24
+camera.resolution = (humanWidth, humanHeight)
+camera.framerate = 4
 awb()
 initTof()
 
 
 while True:
+	readSettings()
 	tof=getTof()
 	tofMoves = avoid(tof)
 
@@ -277,3 +304,5 @@ while True:
 	status['tof']=tof
 	executeMoves(moves)
 	print(status)
+	camera.capture_sequence(['../html/ramdisk/frame.jpg'],'jpeg',True,None,0,False,thumbnail=None)
+	writeTelemetry()
