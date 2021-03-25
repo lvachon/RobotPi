@@ -33,7 +33,7 @@ def getGPS():
 		f.close()
 	except:
 		if(f):f.close()
-		gpsData = {'lat':42,'lon':-71}
+		gpsData = False #{'lat':42,'lon':-71}
 	return gpsData
 def ledOn():
 	led.value=True
@@ -266,7 +266,7 @@ def bearingToPoint(srcLat,srcLon,destLat,destLon):
 	if(b<0):b+=360
 	return b
 
-waypoints = [(-90,0)] #TO THE SOUTH POLE!
+waypoints = [(42.107642,-71.034693)] 
 currentWaypoint = 0
 def autopilot():
 	global waypoints
