@@ -86,7 +86,7 @@ function writeTelemetry(){
 	$lorastring="MODE: ${tele['phase']}";
 	$lorastring.=";MOVES: ${tele['moves']}";
 	$pos = getGPS();
-	$lorastring.=";POS:".strval(floor($pos['lat']*1000)/10000).",".strval(floor($pos['lon']*1000)/1000);
+	$lorastring.=";POS:".strval(floor($pos->lat*1000)/1000).",".strval(floor($pos->lon*1000)/1000);
 	$lorastring.=";TOF:{$tele['distances'][0]},{$tele['distances'][1]}";
 	$lorastring.=";SEEK:".implode(',',$tele['seek']);
 	echo("printf 'AT+SEND=0,".strlen($lorastring).",".$lorastring."\\r\\n' > /dev/serial0");

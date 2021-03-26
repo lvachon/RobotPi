@@ -1,1 +1,1 @@
-{"minDist":"750","srcThresh":"32","frameSleep":"500","backLimit":"3","downsamplePower":"4","redSeek":"254","greenSeek":"44","blueSeek":"109","colorTolerance":"8","navMode":"UV"}
+{"minDist":"500","srcThresh":"32","frameSleep":"500","backLimit":"3","downsamplePower":"4","redSeek":"255","greenSeek":"241","blueSeek":"195","colorTolerance":"16","navMode":"GPS"}

@@ -8,5 +8,7 @@ touch /home/pi/RobotPi/html/ramdisk/motorCommand
 chmod a+rw /home/pi/RobotPi/html/ramdisk/motorCommand
 touch /home/pi/RobotPi/html/ramdisk/telemetry
 chmod a+rw /home/pi/RobotPi/html/ramdisk/telemetry
-raspistill -o /home/pi/RobotPi/html/ramdisk/frame.jpg -tl 250 -t 0 -w 1024 -h 768 -q 10 -bm 
+touch /home/pi/RobotPi/html/ramdisk/gpsdata
+chmod a+rw /home/pi/RobotPi/html/ramdisk/gpsdata
+#raspistill -o /home/pi/RobotPi/html/ramdisk/frame.jpg -tl 250 -t 0 -w 1024 -h 768 -q 10 -bm 
 

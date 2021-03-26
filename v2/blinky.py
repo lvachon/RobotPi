@@ -31,6 +31,9 @@ def getGPS():
 		f = open('/home/pi/RobotPi/html/ramdisk/gpsdata')
 		gpsData = json.load(f)
 		f.close()
+		if(gpsData['time']<time.time()-5):
+			print("No fix/old fix")
+			gpdData=false
 	except:
 		if(f):f.close()
 		gpsData = False #{'lat':42,'lon':-71}
@@ -266,7 +269,7 @@ def bearingToPoint(srcLat,srcLon,destLat,destLon):
 	if(b<0):b+=360
 	return b
 
-waypoints = [(42.107642,-71.034693)] 
+waypoints = [(42.107582,-71.034714),(42.107684,-71.034672)] 
 currentWaypoint = 0
 def autopilot():
 	global waypoints
@@ -279,19 +282,26 @@ def autopilot():
 	dist = haversine((gps['lat'],gps['lon']),waypoints[currentWaypoint],Unit.METERS)
 	status['dist']=dist
 	status['heading']=heading
-	if(dist<10):
-		if(currentWaypoint+1<len(waypoints)):
-			currentWaypoint+=1
+	status['target']=currentWaypoint
+	if(gps['hdop']<5):
+		if(dist<5*gps['hdop']):
+			print("At waypoint")
+			if(currentWaypoint+1<len(waypoints)):
+				print("Going to next one")
+				currentWaypoint+=1
+			else:
+				currentWaypoint=0
 		else:
-			return "s"
+			desiredBearing = bearingToPoint(gps['lat'],gps['lon'],waypoints[currentWaypoint][0],waypoints[currentWaypoint][1])
+			bearingDiff = desiredBearing - heading
+			if(bearingDiff>180):bearingDiff-=360
+			if(bearingDiff<-180):bearingDiff+=360
+			if(bearingDiff>30): return "fr"
+			if(bearingDiff<-30): return "fl"
+			return "f"
 	else:
-		desiredBearing = bearingToPoint(gps['lat'],gps['lon'],waypoints[currentWaypoint][0],waypoints[currentWaypoint][1])
-		bearingDiff = desiredBearing - heading
-		if(bearingDiff>180):bearingDiff-=360
-		if(bearingDiff<-180):bearingDiff+=360
-		if(bearingDiff>30): return "fr"
-		if(bearingDiff<-30): return "fl"
-		return "f"
+		print("Too innacurate to move")
+		return "s"
 
 print("Init params")
 settings = {'srcThresh':32,'backLimit':3, 'minDist':750,'navMode':'GPS'}
@@ -345,6 +355,8 @@ mpu9250 = FaBo9Axis_MPU9250.MPU9250()
 
 
 while True:
+	with open('/home/pi/RobotPi/html/ramdisk/autocmd') as f:
+		cmd = f.read()
 	readSettings()
 	tof=getTof()
 	tofMoves = avoid(tof)
@@ -364,9 +376,10 @@ while True:
 				moves = ""
 	else:
 		status['phase']='travel'
-		if(len(seekMoves)):
+		if(seekMoves):
 			status['phase']='seek'
 			moves=seekMoves
+			if(moves=="s"):status['phase']="Seek Wait"
 	if(tofMoves=="r" and seekMoves=="l" and settings['navMode']=="UV"):
 		status['phase']='t-left'
 		moves="l"
@@ -375,7 +388,7 @@ while True:
 		moves="r"
 	status['moves']=moves
 	status['tof']=tof
-	executeMoves(moves)
+	if(cmd=="GO"):executeMoves(moves)
 	print(settings)
 	print(status)
 	camera.capture_sequence(['../html/ramdisk/frame.jpg'],'jpeg',True,None,0,False,thumbnail=None)
