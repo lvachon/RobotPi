@@ -226,13 +226,18 @@ def readSettings():
 	f.close()
 	settingsMod=time.time()
 
+lastTele = 0
 def writeTelemetry():
+	global lastTele
 	status['time']=time.strftime('%H:%M:%S')
 	f = open('../html/ramdisk/telemetry','w')
-	jstring = repr(status).replace("'","\"")
-	f.write(jstring)
+	jstring = repr(status)
+	f.write(jstring.replace("'","\""))
 	f.close()
-	os.system("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
+	if(lastTele<time.time()-5):
+		print("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
+		os.system("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
+		lastTele = time.time()
 
 
 #18.221 62.345 48.369 90.085
@@ -351,8 +356,13 @@ camera.resolution = (humanWidth, humanHeight)
 camera.framerate = 4
 awb()
 initTof()
+
+print("Init Compass")
 mpu9250 = FaBo9Axis_MPU9250.MPU9250()
 
+print("Init LoRa")
+os.system('stty -F /dev/serial0 115200')
+os.system("printf 'AT+PARAMETER=9,7,1,6\r\n' > /dev/serial0")
 
 while True:
 	with open('/home/pi/RobotPi/html/ramdisk/autocmd') as f:
@@ -389,7 +399,7 @@ while True:
 	status['moves']=moves
 	status['tof']=tof
 	if(cmd=="GO"):executeMoves(moves)
-	print(settings)
 	print(status)
-	camera.capture_sequence(['../html/ramdisk/frame.jpg'],'jpeg',True,None,0,False,thumbnail=None)
+	os.system("mv ../html/ramdisk/buffer.jpg ../html/ramdisk/frame.jpg")
+	camera.capture_sequence(['../html/ramdisk/buffer.jpg'],'jpeg',True,None,0,False,thumbnail=None)
 	writeTelemetry()
