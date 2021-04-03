@@ -64,12 +64,12 @@ def autopilot():
 	if(len(waypoints)<1):
 		print("No waypoints")
 		return "s"
-	dist = haversine((gps['lat'],gps['lon']),waypoints[currentWaypoint],Unit.METERS)
-	status['dist']=dist
-	status['heading']=heading
+	dist = haversine((gps['lat'],gps['lon']),(waypoints[currentWaypoint][0],waypoints[currentWaypoint][1]),Unit.METERS)
+	status['dist']=int(dist*10)/10
+	status['heading']=int(heading*10)/10
 	status['target']=currentWaypoint
-	if(gps['hdop']<5):
-		if(dist<5*gps['hdop']):
+	if(gps['hdop']<3):
+		if(dist<3*gps['hdop']):
 			print("At waypoint")
 			if(currentWaypoint+1<len(waypoints)):
 				print("Going to next one")
@@ -96,10 +96,11 @@ def readWaypoints():
 	f = open('../html/waypoints')
 	try:
 		waypoints = json.load(f)
-		for i in range(0,len(waypoints)-1):
-			waypoints[i]=[float(waypoints[i][0]),float(waypoints[i][0])]
+		for i in range(0,len(waypoints)):
+			waypoints[i]=[float(waypoints[i][0]),float(waypoints[i][1])]
 		currentWapoint=0
 		status['target']=currentWaypoint
+		print("NEW WAYPOINTS")
 	except Exception as e:
 		print(e)
 	
