@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-from picamera.array import PiRGBArray
-from picamera import PiCamera
-import numpy as np
-import math
+#from picamera.array import PiRGBArray
+#from picamera import PiCamera
+#import numpy as np
+#import math
 import time
 import json
 import os
-import board
-import digitalio
-import FaBo9Axis_MPU9250
-from haversine import haversine, Unit
-from adafruit_vl53l0x import VL53L0X
+#import board
+#import digitalio
+#import FaBo9Axis_MPU9250
+#from haversine import haversine, Unit
+#from adafruit_vl53l0x import VL53L0X
 
 from gpsnav import *
 from tof import *

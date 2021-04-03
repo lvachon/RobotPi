@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import FaBo9Axis_MPU9250
+from haversine import haversine, Unit
+
 def getGPS():
 	try:
 		f = open('/home/pi/RobotPi/html/ramdisk/gpsdata')

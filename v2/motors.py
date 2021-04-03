@@ -1,3 +1,8 @@
+import board
+import digitalio
+import time
+
+
 rightF = digitalio.DigitalInOut(board.D4)
 rightF.direction = digitalio.Direction.OUTPUT
 rightF.value = False

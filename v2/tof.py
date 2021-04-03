@@ -1,3 +1,7 @@
+import board
+import digitalio
+from adafruit_vl53l0x import VL53L0X
+
 tofL=0
 tofR=0
 def initTof():

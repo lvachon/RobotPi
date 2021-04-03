@@ -1,3 +1,6 @@
+import board
+import digitalio
+
 led = digitalio.DigitalInOut(board.D5)
 led.direction = digitalio.Direction.OUTPUT
 
