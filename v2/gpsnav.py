@@ -2,6 +2,7 @@
 import FaBo9Axis_MPU9250
 from haversine import haversine, Unit
 from util import *
+import json
 
 def getGPS():
 	try:
@@ -24,10 +25,7 @@ maxY=90.085
 mpu9250 = FaBo9Axis_MPU9250.MPU9250()
 
 def compass():
-        global minX
-        global minY
-        global maxX
-        global maxY
+        global minX, minY, maxX, maxY, mpu9250
         mag = mpu9250.readMagnet()
         if(mag['y']>maxY):maxY=mag['y']
         if(mag['y']<minY):minY=mag['y']
@@ -51,8 +49,6 @@ def bearingToPoint(srcLat,srcLon,destLat,destLon):
 	if(b<0):b+=360
 	return b
 
-waypoints = [(42.107582,-71.034714),(42.107684,-71.034672)] 
-currentWaypoint = 0
 def autopilot():
 	global waypoints, currentWaypoint, status, settings
 	gps = getGPS()
@@ -60,6 +56,9 @@ def autopilot():
 		print("No GPS")
 		return "s"
 	heading = compass()
+	if(len(waypoints)<1):
+		print("No waypoints")
+		return "s"
 	dist = haversine((gps['lat'],gps['lon']),waypoints[currentWaypoint],Unit.METERS)
 	status['dist']=dist
 	status['heading']=heading
@@ -71,6 +70,7 @@ def autopilot():
 				print("Going to next one")
 				currentWaypoint+=1
 			else:
+				print("Going to first one")
 				currentWaypoint=0
 		else:
 			desiredBearing = bearingToPoint(gps['lat'],gps['lon'],waypoints[currentWaypoint][0],waypoints[currentWaypoint][1])
@@ -83,3 +83,22 @@ def autopilot():
 	else:
 		print("Too innacurate to move")
 		return "s"
+
+def readWaypoints():
+	global waypointsMod, waypoints, status, currentWaypoint
+	if(os.path.getmtime('../html/waypoints')<=waypointsMod):
+		return
+	f = open('../html/waypoints')
+	try:
+		waypoints = json.load(f)
+		currentWapoint=0
+		status['target']=currentWaypoint
+	except Exception as e:
+		print(e)
+
+	f.close()
+	waypointsMod=time.time()
+
+waypoints = [(42.107582,-71.034714),(42.107684,-71.034672)] 
+currentWaypoint = 0
+waypointsMod = 0
