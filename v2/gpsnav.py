@@ -91,12 +91,15 @@ def readWaypoints():
 	f = open('../html/waypoints')
 	try:
 		waypoints = json.load(f)
+		for i in range(0,len(waypoints)-1):
+			waypoints[i]=[float(waypoints[i][0]),float(waypoints[i][0])]
 		currentWapoint=0
 		status['target']=currentWaypoint
 	except Exception as e:
 		print(e)
-
+	
 	f.close()
+	print(waypoints)
 	waypointsMod=time.time()
 
 waypoints = [(42.107582,-71.034714),(42.107684,-71.034672)] 

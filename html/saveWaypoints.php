@@ -1,2 +1,2 @@
 <?php
-var_dump($_POST);
+file_put_contents("waypoints",json_encode($_POST['waypoints']));
