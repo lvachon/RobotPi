@@ -4,6 +4,7 @@ import numpy as np
 import math
 import time
 from util import *
+from leds import *
 
 def awb():
 	camera.awb_mode = 'auto'
@@ -14,11 +15,11 @@ def awb():
 	g = camera.awb_gains
 	camera.awb_mode = 'off'
 	camera.awb_gains = g
+
 def getFrame():
 	frame = np.empty((imgHeight,imgWidth,3),dtype=np.uint8)
 	camera.capture_sequence([frame],'rgb',True,(64,48))
 	return frame
-
 
 
 def lum(r,g,b):
@@ -42,6 +43,8 @@ def makeUVMap():
 				abs((int)(light[y][x][2])-(int)(dark[y][x][2])))
 			uvmap[y][x]=[lumDif,lumDif,lumDif]
 	return uvmap
+
+
 def seek(map):
 	global settings,status
 	bins = [0,0,0,0,0]
@@ -64,6 +67,7 @@ def seek(map):
 		moves="f"
 	status['seek']=bins
 	return moves
+	
 imgWidth=64
 imgHeight=48
 humanWidth=640

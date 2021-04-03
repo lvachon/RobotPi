@@ -14,7 +14,7 @@ import os
 
 from gpsnav import *
 from tof import *
-from leds import *
+
 from motors import *
 from vision import *
 from util import *
@@ -47,10 +47,6 @@ def writeTelemetry():
 		lastTele = time.time()
 
 
-print("Init params")
-
-settingsMod=0
-lastTele = 0
 print("Init camera")
 awb()
 print("Init ToF")
