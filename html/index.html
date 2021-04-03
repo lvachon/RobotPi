@@ -166,6 +166,9 @@
 			greenSeek.value=Math.floor(green*scale);
 			blueSeek.value=Math.floor(blue*scale);
 		}
+		function saveWaypoints(){
+			$.post("saveWaypoints.php",{waypoints},(data)=>{console.log(data);});
+		}
 	</script>
 	<link href='style.css' rel='stylesheet'/>
 
@@ -232,7 +235,9 @@
 			<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 			<div id='gpsElem'>GPS...</div>
 			<textarea id='waypointArea'></textarea><br/>
-			<input type='button' value='Clear'/><input type='button' value='Add' onclick="listen = map.addListener('click',addPoint)" /><input type='button' value='Save'/>
+			<input type='button' value='Clear' onclick='waypoints=[];mission.setPath(waypoints);waypointArea.innerHTML="[]";'/>
+			<input type='button' value='Add' onclick="listen = map.addListener('click',addPoint)" />
+			<input type='button' value='Save' onclick='saveWaypoints();' />
 		</div>
 	</div>
 </body>
