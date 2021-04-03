@@ -7,7 +7,7 @@ import time
 def awb():
 	camera.awb_mode = 'auto'
 	camera.exposure_mode = 'auto'
-	time.sleep(1)
+	time.sleep(2)
 	camera.shutter_speed = camera.exposure_speed
 	camera.exposure_mode = 'off'
 	g = camera.awb_gains
@@ -42,6 +42,7 @@ def makeUVMap():
 			uvmap[y][x]=[lumDif,lumDif,lumDif]
 	return uvmap
 def seek(map):
+	global settings,status
 	bins = [0,0,0,0,0]
 	for y in range(0,imgHeight-1):
 		for bin in range(0,4):

@@ -41,6 +41,7 @@ def getTof():
 		rRange = -1
 	return [lRange,rRange]
 def avoid(tof):
+	global status,settings
 	moves = "f"
 	if(tof[0]<tof[1] and tof[0]<settings['minDist']):
 		if(tof[0]<settings.get('minDist')/2):

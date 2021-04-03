@@ -53,8 +53,7 @@ def bearingToPoint(srcLat,srcLon,destLat,destLon):
 waypoints = [(42.107582,-71.034714),(42.107684,-71.034672)] 
 currentWaypoint = 0
 def autopilot():
-	global waypoints
-	global currentWaypoint
+	global waypoints, currentWaypoint, status, settings
 	gps = getGPS()
 	if(gps==False):
 		print("No GPS")
