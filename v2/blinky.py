@@ -32,9 +32,9 @@ def readSettings():
 	f.close()
 	settingsMod=time.time()
 
-lastTele = 0
+
 def writeTelemetry():
-	global lastTele
+	global lastTele, status
 	status['time']=time.strftime('%H:%M:%S')
 	f = open('../html/ramdisk/telemetry','w')
 	jstring = repr(status)
@@ -50,6 +50,7 @@ print("Init params")
 settings = {'srcThresh':32,'backLimit':3, 'minDist':750,'navMode':'GPS'}
 status = {'backCount':0}
 settingsMod=0
+lastTele = 0
 print("Init camera")
 awb()
 print("Init ToF")
