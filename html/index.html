@@ -42,8 +42,8 @@
 				try{
 					waypoints=JSON.parse(sdata);
 					waypointArea.innerHTML=waypoints;
-					const missionPoints = waypoints.map(point=>new google.maps.LatLng(point[0],point[1]))
-					const mission = new google.maps.Polyline({path:missionPoints,strokeColor:"#FF8800"});
+					missionPoints = waypoints.map(point=>new google.maps.LatLng(point[0],point[1]))
+					mission = new google.maps.Polyline({path:missionPoints,strokeColor:"#FF8800"});
 					mission.setMap(map);
 				}catch(e){
 					console.error(e);
@@ -232,7 +232,7 @@
 			<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 			<div id='gpsElem'>GPS...</div>
 			<textarea id='waypointArea'></textarea><br/>
-			<input type='button' value='Clear'/><input type='button' value='Add'/><input type='button' value='Save'/>
+			<input type='button' value='Clear'/><input type='button' value='Add' onclick="listen = map.addListener('click',addPoint)" /><input type='button' value='Save'/>
 		</div>
 	</div>
 </body>
@@ -241,6 +241,14 @@
 	let path;
 	let pathPoints;
 	let marker;
+	function addPoint(e){
+		console.log(e);
+		waypoints.push([e.latLng.lat(),e.latLng.lng()]);
+		waypointArea.innerHTML = JSON.stringify(waypoints);
+		google.maps.event.removeListener(listen);
+		missionPoints = waypoints.map(point=>new google.maps.LatLng(point[0],point[1]))
+		mission.setPath(missionPoints);
+	}
 	function initMap() {
 		map = new google.maps.Map(document.getElementById("mapDiv"), {
 			center: { lat:42.1078586,lng:-71.0347802 },
@@ -248,7 +256,6 @@
 			mapTypeId: google.maps.MapTypeId.SATELLITE,
 			tilt: 0,
 		});
-		map.onclick = (e=>{console.log(e)});
 		pathPoints = [];
 		path = new google.maps.Polyline({path:pathPoints,strokeColor:"#FF0000"});
 		path.setMap(map);
