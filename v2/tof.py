@@ -2,7 +2,8 @@ import board
 import digitalio
 import time
 from adafruit_vl53l0x import VL53L0X
-from blinky import status,settings
+from util import *
+
 
 tofL=0
 tofR=0

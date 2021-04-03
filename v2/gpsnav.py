@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import FaBo9Axis_MPU9250
 from haversine import haversine, Unit
+from util import *
 
 def getGPS():
 	try:

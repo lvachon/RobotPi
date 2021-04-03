@@ -17,6 +17,7 @@ from tof import *
 from leds import *
 from motors import *
 from vision import *
+from util import *
 
 def readSettings():
 	global settingsMod, settings
@@ -47,8 +48,7 @@ def writeTelemetry():
 
 
 print("Init params")
-settings = {'srcThresh':32,'backLimit':3, 'minDist':750,'navMode':'GPS'}
-status = {'backCount':0}
+
 settingsMod=0
 lastTele = 0
 print("Init camera")
