@@ -20,6 +20,7 @@ minX=18.221
 maxX=62.345
 minY=48.369
 maxY=90.085
+mpu9250 = FaBo9Axis_MPU9250.MPU9250()
 
 def compass():
         global minX
