@@ -94,7 +94,7 @@
 						pathPoints.push({lat:data.lat,lng:data.lon});
 						path.setPath(pathPoints);
 						marker.setPosition({lat:data.lat,lng:data.lon});
-						map.panTo(marker.getPosition());
+						//map.panTo(marker.getPosition());
 					}
 				}catch(e){}
 				setTimeout(refreshGPS,1000);				

@@ -3,6 +3,9 @@ import FaBo9Axis_MPU9250
 from haversine import haversine, Unit
 from util import *
 import json
+import time
+import math
+import os
 
 def getGPS():
 	try:
@@ -12,7 +15,8 @@ def getGPS():
 		if(gpsData['time']<time.time()-5):
 			print("No fix/old fix")
 			gpdData=false
-	except:
+	except Exception as e:
+		print(e)
 		if(f):f.close()
 		gpsData = False #{'lat':42,'lon':-71}
 	return gpsData
@@ -56,6 +60,7 @@ def autopilot():
 		print("No GPS")
 		return "s"
 	heading = compass()
+	readWaypoints()
 	if(len(waypoints)<1):
 		print("No waypoints")
 		return "s"
