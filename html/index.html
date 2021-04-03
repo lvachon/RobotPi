@@ -41,7 +41,7 @@
 			$.get("waypoints",(sdata)=>{
 				try{
 					waypoints=JSON.parse(sdata);
-					waypointArea.innerHTML=waypoints;
+					waypointArea.innerHTML=sdata;
 					missionPoints = waypoints.map(point=>new google.maps.LatLng(point[0],point[1]))
 					mission = new google.maps.Polyline({path:missionPoints,strokeColor:"#FF8800"});
 					mission.setMap(map);
