@@ -234,10 +234,12 @@
 			<div class='stats' id='teleElem'>Telemetry...</div>
 			<div id='mapDiv' style='min-width:520px;height:320px;width:95%;margin:8px;'></div>
 			<div id='gpsElem'>GPS...</div>
-			<textarea id='waypointArea'></textarea><br/>
-			<input type='button' value='Clear' onclick='waypoints=[];mission.setPath(waypoints);waypointArea.innerHTML="[]";'/>
-			<input type='button' value='Add' onclick="listen = map.addListener('click',addPoint)" />
-			<input type='button' value='Save' onclick='saveWaypoints();' />
+			<textarea id='waypointArea' style='min-width:520px;height:320px;width:95%;margin:8px;'></textarea><br/>
+			<div style='display:flex;align-items:stretch;'>
+				<input type='button' value='Clear' onclick='waypoints=[];mission.setPath(waypoints);waypointArea.innerHTML="[]";'/>
+				<input type='button' value='Add' onclick="listen = map.addListener('click',addPoint)" />
+				<input type='button' value='Save' onclick='saveWaypoints();' />
+			</div>
 		</div>
 	</div>
 </body>

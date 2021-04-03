@@ -42,7 +42,6 @@ def writeTelemetry():
 	f.write(jstring.replace("'","\""))
 	f.close()
 	if(lastTele<time.time()-5):
-		print("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
 		os.system("printf \"AT+SEND=0,"+str(len(jstring))+","+jstring+"\\r\\n\" > /dev/serial0")
 		lastTele = time.time()
 
