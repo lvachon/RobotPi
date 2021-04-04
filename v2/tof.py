@@ -23,12 +23,10 @@ def initTof():
 	except:
 		print("Already changed!\n")
 		tofR = VL53L0X(i2c,0x31)
-	print(tofR)
 	#turn left tof back on
 	enablePin.value = True
 	time.sleep(0.1)
 	tofL = VL53L0X(i2c,0x29,1)
-	print(tofL)
 	tofR.measurement_timing_budget = 66000
 	tofL.measurement_timing_budget = 66000
 def getTof():

@@ -34,10 +34,7 @@ def fwd(secs):
 	rightE.value=True
 	leftE.value=True
 	time.sleep(secs)
-	rightE.value=False
-	leftE.value=False
-	rightF.value=False
-	leftF.value=False
+	stop()
 def bwd(secs):
     rightF.value=False
     leftF.value=False
@@ -46,10 +43,7 @@ def bwd(secs):
     rightE.value=True
     leftE.value=True
     time.sleep(secs)
-    rightE.value=False
-    leftE.value=False
-    rightB.value=False
-    leftB.value=False
+    stop()
 def left(secs):
 	rightB.value=False
 	leftF.value=False
@@ -58,10 +52,7 @@ def left(secs):
 	leftE.value=True
 	rightE.value=True
 	time.sleep(secs)
-	rightF.value=False
-	leftB.value=False
-	rightE.value=False
-	leftE.value=False
+	stop()
 def right(secs):
     rightF.value=False
     leftB.value=False
@@ -70,8 +61,12 @@ def right(secs):
     leftE.value=True
     rightE.value=True
     time.sleep(secs)
-    rightB.value=False
+    stop()
+def stop():
+	rightB.value=False
+	rightF.value=False
     leftF.value=False
+    leftB.value=False
     rightE.value=False
     leftE.value=False
 def executeMoves(moves):

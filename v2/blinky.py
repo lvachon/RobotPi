@@ -90,6 +90,6 @@ while True:
 	status['tof']=tof
 	if(cmd=="GO"):executeMoves(moves)
 	print(status)
-	os.system("mv ../html/ramdisk/buffer.jpg ../html/ramdisk/frame.jpg")
 	camera.capture_sequence(['../html/ramdisk/buffer.jpg'],'jpeg',True,None,0,False,thumbnail=None)
+	os.system("mv ../html/ramdisk/buffer.jpg ../html/ramdisk/frame.jpg")
 	writeTelemetry()
